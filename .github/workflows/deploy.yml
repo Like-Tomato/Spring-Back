@@ -20,6 +20,7 @@ jobs:
           script: |
             cd /home/ubuntu/Spring-Back
             git pull origin main
+            chmod +x gradlew # gradlew 파일에 실행 권한 부여
             ./gradlew clean build
             # 서버가 꺼져있어도 실행시키기 위한 명령어
             sudo fuser k- kn tcp 8080 || true
