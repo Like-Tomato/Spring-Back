@@ -1,4 +1,4 @@
-package com.like_lion.tomato.auth.api;
+package com.like_lion.tomato.domain.auth.api;
 
 
 import org.springframework.http.HttpStatus;
@@ -27,6 +27,7 @@ public class AuthController {
     /**
      * /login/google 요청시 앱 서버에서 직접 리디렉트 URI를 만들어 리디렉트시키는 방식
      * ResponseApi 객체가 생성되면 ResponseEntity 대신 ResponseApi로 수정할 예정!
+     * (이후 아이디가 존재하면 바로 로그인 처리를, 존재하지 않으면 로그인 창으로 이동시킬 예정!)
      * @return
      */
     @GetMapping("/login/google")
