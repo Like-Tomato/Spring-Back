@@ -1,10 +1,10 @@
 package com.like_lion.tomato.domain.auth.api;
 
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,16 +13,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 
 @RestController
 public class AuthController {
 
-    private final InMemoryClientRegistrationRepository clientRegistrationRepository;
+    private final ClientRegistrationRepository clientRegistrationRepository;
 
-    public AuthController(InMemoryClientRegistrationRepository clientRegistrationRepository) {
-        this.clientRegistrationRepository = clientRegistrationRepository;
-    }
 
     /**
      * /login/google 요청시 앱 서버에서 직접 리디렉트 URI를 만들어 리디렉트시키는 방식
