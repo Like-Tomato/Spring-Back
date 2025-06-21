@@ -14,14 +14,16 @@ public class UserInfo {
     private String email;
     private String profileImageUrl; // (기본 구글, 이후 프로필 수정)
     private String role;
+    private String provider;
 
     @Builder
-    public UserInfo(Long id, String username, String email, String profileImageUrl, String role) {
+    public UserInfo(Long id, String username, String email, String profileImageUrl, String role, String provider) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
+        this.provider = provider;
     }
 
     // Member -> UserInfo 생성자 만들기
