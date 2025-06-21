@@ -32,5 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/v1").permitAll());
 
+        return http.build();
+
     }
 }
