@@ -1,7 +1,5 @@
 package com.like_lion.tomato.global.auth.model.provider;
 
-import org.apache.coyote.BadRequestException;
-import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,7 +27,17 @@ public abstract class OAuth2ProviderUser {
         }
     }
 
-    // toMember 메서드 생섣ㅇ
+    // toMember 메서드 생성 예정!
 
-    // getter(email, username, providerId, profileImageUrl, Provider 등)
+    public abstract String getEmail();
+    public abstract String getUsername();
+    public abstract String getProviderId();
+    public abstract String getProfileImageUrl();
+    public String getProvider() {
+        return provider;
+    }
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
 }
