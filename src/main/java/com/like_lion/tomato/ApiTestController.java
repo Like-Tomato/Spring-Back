@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiTestController {
     @GetMapping("/")
     public String test() {
-        return "test success";
+        return "test infra";
     }
 }
