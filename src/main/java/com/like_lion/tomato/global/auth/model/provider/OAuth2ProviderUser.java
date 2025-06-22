@@ -1,5 +1,7 @@
 package com.like_lion.tomato.global.auth.model.provider;
 
+import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.global.auth.model.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,15 +21,24 @@ public abstract class OAuth2ProviderUser {
     public static OAuth2ProviderUser create(Map<String, Object> attributes, String registrationId) {
         switch (registrationId) {
             case "google":
-                return null; // googleUser 객체로 반환
+                return new GoogleUser(attributes, registrationId); // googleUser 객체로 반환
             default:
                 // apiResponse가 만들어지면 다음으로 수정
-                // throw new BadRequestExceptoin(ErrorCode.BAD_REQUEST, "일치하는 제공자가 업습ㄴ디ㅏ.");
+                // throw new BadRequestExceptoin(ErrorCode.BAD_REQUEST, "일치하는 제공자가 없습니다");
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일치하는 제공자가 없습니다.");
         }
     }
 
-    // toMember 메서드 생성 예정!
+    public Member toMember(Role role) {
+        return Member.builder()
+                .username(this.getUsername())
+                .email(this.getEmail())
+                .provider(this.getProvider())
+                .profileImageUrl(this.getProfileImageUrl())
+                .role(role)
+                .build();
+    }
+
 
     public abstract String getEmail();
     public abstract String getUsername();

@@ -1,5 +1,6 @@
 package com.like_lion.tomato.global.auth.dto;
 
+import com.like_lion.tomato.domain.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,13 @@ public class UserInfo {
         this.provider = provider;
     }
 
-    // Member -> UserInfo 생성자 만들기
+    public static UserInfo from(Member member) {
+        return UserInfo.builder()
+                .id(member.getId())
+                .username(member.getUsername())
+                .profileImageUrl(member.getProfileImageUrl())
+                .provider(member.getProvider())
+                .build();
+    }
 
 }
