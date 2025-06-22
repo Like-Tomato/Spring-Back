@@ -1,5 +1,7 @@
 package com.like_lion.tomato.global.config;
 
+import com.like_lion.tomato.global.auth.application.LikeLionOauth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,9 +10,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
+
+    private final LikeLionOauth2UserService likeLionOauth2UserService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,7 +29,14 @@ public class SecurityConfig {
                 .sessionManagement((session)-> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        // oauth2Login http
+        http
+                //이후 LoginSuccessHandler, LoginFailerHandler 추가!
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint(userInfoEndpointConfig ->
+                                userInfoEndpointConfig
+                                        .userService(likeLionOauth2UserService)));
+                // .successHandler(oAuth2LoginSuccessHandler);
+
         // addFilterBefore
         // exceptionHandling 추가하기!
         // 경로별 인가: 추후 자세히 설정 예정!
