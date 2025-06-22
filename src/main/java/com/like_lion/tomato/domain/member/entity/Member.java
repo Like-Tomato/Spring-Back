@@ -3,6 +3,7 @@ package com.like_lion.tomato.domain.member.entity;
 import com.like_lion.tomato.global.auth.model.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +11,8 @@ import java.sql.Array;
 import java.util.ArrayList;
 
 @Getter
-
-@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +23,12 @@ public class Member {
 
     @Column(nullable = false, unique = true, length = 30)
     private String email;
+
+    @Column(unique = true)
+    private String providerId;
+
+    @Column(nullable = false)
+    private String provider;
 
     private String profileImageUrl;
 
@@ -49,5 +55,15 @@ public class Member {
         assignment.setMember(this);
     }
      **/
+
+
+    @Builder
+    public Member(String username, String email, String provider, String profileImageUrl, Role role, String part, String introduce) {
+        this.username = username;
+        this.email = email;
+        this.provider = provider;
+        this.profileImageUrl = profileImageUrl;
+        this.role = role;
+    }
 
 }
