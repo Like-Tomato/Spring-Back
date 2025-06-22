@@ -1,5 +1,6 @@
 package com.like_lion.tomato.domain.member.entity;
 
+import com.like_lion.tomato.global.auth.model.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, length = 20) // 동명이인 존재 가능성
     private String username;
 
     @Column(nullable = false, unique = true, length = 30)
@@ -25,8 +26,9 @@ public class Member {
 
     private String profileImageUrl;
 
-    // @Column(EnumType.STRING)
-    // private Role role; // ROLE만든 후 구현!
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Column(nullable = false, length = 30)
     private String part;
 
