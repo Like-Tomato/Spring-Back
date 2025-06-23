@@ -28,4 +28,3 @@ public record ApiResponse<T>(
         return new ApiResponse<>(code, null, new ErrorDetails(code, message, details));
     }
 }
-
