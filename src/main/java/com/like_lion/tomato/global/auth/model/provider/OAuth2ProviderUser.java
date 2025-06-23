@@ -34,7 +34,7 @@ public abstract class OAuth2ProviderUser {
                 .username(this.getUsername())
                 .email(this.getEmail())
                 .provider(this.getProvider())
-                .profileImageUrl(this.getProfileImageUrl())
+                .profileUrl(this.getProfileUrl())
                 .role(role)
                 .build();
     }
@@ -43,7 +43,7 @@ public abstract class OAuth2ProviderUser {
     public abstract String getEmail();
     public abstract String getUsername();
     public abstract String getProviderId();
-    public abstract String getProfileImageUrl();
+    public abstract String getProfileUrl();
     public String getProvider() {
         return provider;
     }

@@ -1,4 +1,4 @@
-/*
+/**
 package com.like_lion.tomato.domain.member.api;
 
 import com.like_lion.tomato.global.response.ApiResponse;
@@ -13,4 +13,4 @@ public class MemberController {
     @GetMapping("/member")
     public ApiResponse<>
 }
-*/
+**/

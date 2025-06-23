@@ -13,7 +13,7 @@ public class GoogleUser extends OAuth2ProviderUser{
     }
 
     @Override
-    public String getProfileImageUrl() {
+    public String getProfileUrl() {
         return (String) getAttributes().get("picture");
     }
 
