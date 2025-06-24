@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum DomainType {
-    MEMBER("MEMBER");
+    MEMBER("MEMBER"),
+    Generation("GENERATION");
 
     private final String prefix;
 
