@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @RestController
@@ -29,6 +27,5 @@ public class MemberController {
         MemberProfileListRes response = memberService.readAllMemberProfiles(page, size, part, year);
         return ApiResponse.success(response);
     }
-
 }
 

@@ -16,6 +16,8 @@ public enum MemberErrorCode implements ErrorCode {
     MEMBER_PROFILE_ALREADY_EXISTS(409, "이미 멤버 소개가 존재합니다."),
     APPLICATION_ALREADY_EXISTS(409, "이미 지원서가 존재합니다."),
     // 유효성 검사
+    INVALID_PART(400, "유효하지 않은 파트입니다."),
+    INVALID_YEAR(400, "유효하지 않은 기수입니다."),
     INVALID_NAME_LENGTH(400, "이름은 2자 이상 50자 이하여야 합니다."),
     INVALID_BIO_LENGTH(400, "소개는 10자 이상 500자 이하여야 합니다."),
     INVALID_URL_FORMAT(400, "유효하지 않은 URL 형식입니다."),
@@ -28,9 +30,8 @@ public enum MemberErrorCode implements ErrorCode {
     // 조회 및 기타
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     MEMBER_NOT_FOUND(404, "멤버를 찾을 수 없습니다."),
-    APPLICATION_NOT_FOUND(404, "지원서를 찾을 수 없습니다.")
-    // 추가 필요시 여기에 계속 추가
-    ;
+    APPLICATION_NOT_FOUND(404, "지원서를 찾을 수 없습니다.");
+
 
     private final int status;
     private final String message;

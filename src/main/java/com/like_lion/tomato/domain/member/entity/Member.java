@@ -13,6 +13,7 @@ import java.sql.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,15 +58,11 @@ public class Member {
     @Column(length = 200)
     private String introduce;
 
-    @Column
-    private int year;
-
     @Column(nullable = false, columnDefinition = "0")
     private int projectCount;
 
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isSubscribed;
-
 
     @OneToMany(mappedBy = "member")
     private List<MemberGeneration> memberGenerations = new ArrayList<>();
@@ -92,6 +89,13 @@ public class Member {
     }
      **/
 
+    // Service에서  .orElseThrow(() -> new MemberException(MemberErrorCode.GENERATION_NOT_FOUND)) 던지기 위한 설계
+    public Optional<Integer> getLatestGenerationYearOptionalInteger(Member member) {
+        return member.getMemberGenerations().stream()
+                .map(MemberGeneration::getGeneration)
+                .map(Generation::getYear)
+                .max(Integer::compareTo);
+    }
 
     @Builder
     public Member(String username, String email, String providerId, String links, String provider, String profileUrl, Role role, String techs, boolean isActive, boolean isSubscribed) {
@@ -108,15 +112,4 @@ public class Member {
         // 자기 소개는 프로필 페이지에서 수정하므로, builder에 추가 안함?
         // links, techs는 넣을때 컴마 그대로 그냥 스트링으로 넣기
     }
-
-
-    // 기수 자동 생성(관리자 페이지에서 진행, 서비스 레이어로 이동 예정)
-    @PrePersist
-    public void generateYear() {
-        int currentYear = LocalDate.now().getYear();
-        int baseYear = 2025;
-        this.year = currentYear - baseYear + 1;
-    }
-
-
 }
