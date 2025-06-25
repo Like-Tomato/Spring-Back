@@ -1,6 +1,8 @@
 package com.like_lion.tomato.global.auth.model.provider;
 
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.global.auth.exception.AuthErrorCode;
+import com.like_lion.tomato.global.auth.exception.AuthException;
 import com.like_lion.tomato.global.auth.model.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,7 +27,7 @@ public abstract class OAuth2ProviderUser {
             default:
                 // apiResponse가 만들어지면 다음으로 수정
                 // throw new BadRequestExceptoin(ErrorCode.BAD_REQUEST, "일치하는 제공자가 없습니다");
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일치하는 제공자가 없습니다.");
+                throw new AuthException(AuthErrorCode.PROVIDER_NOT_FOUND);
         }
     }
 
@@ -38,7 +40,6 @@ public abstract class OAuth2ProviderUser {
                 .role(role)
                 .build();
     }
-
 
     public abstract String getEmail();
     public abstract String getUsername();

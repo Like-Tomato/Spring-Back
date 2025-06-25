@@ -41,17 +41,14 @@ public class LikeLionOauth2UserService implements OAuth2UserService {
 
         log.info("구글 로그인 - 유저 아이디: {}, 유저명: {}, 이메일: {},", member.getId(), member.getUsername(), member.getEmail());
 
-
         UserInfo dto = UserInfo.from(member);
         return LikeLionOAuth2User.of(dto, oAuth2ProviderUser);
     }
-
 
     private OAuth2ProviderUser getOauth2ProviderUsers(ClientRegistration clientRegistration, OAuth2User oAuth2User) {
         String registrationId = clientRegistration.getRegistrationId();
         Map<String, Object> attributes = oAuth2User.getAttributes();
         return OAuth2ProviderUser.create(attributes, registrationId);
     }
-
 
 }
