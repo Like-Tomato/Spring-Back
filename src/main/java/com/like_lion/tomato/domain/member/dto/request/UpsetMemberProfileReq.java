@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.member.dto;
+package com.like_lion.tomato.domain.member.dto.request;
 
 
 import lombok.Builder;

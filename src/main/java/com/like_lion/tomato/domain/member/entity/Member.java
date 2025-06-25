@@ -30,6 +30,7 @@ public class Member {
     @Column(nullable = false, unique = true, length = 30)
     private String email;
 
+    // 구글 로그인만 진행하므로 provider, provider_id 필드는 형식상 존재, 사용x, 만약 네이버, 카카오 로그인 확장시 추가 구현
     @Column(unique = true)
     private String providerId;
 
@@ -41,11 +42,20 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column
+    private String links;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE" )
+    private boolean isActive;
+
+    @Column(nullable = false)
+    private String major;
+
     @Column(length = 30)
     private String part;
 
     @Column(nullable = false)
-    private String tech;
+    private String techs;
 
     @Column(length = 200)
     private String introduce;
@@ -53,10 +63,11 @@ public class Member {
     @Column
     private int year;
 
+    @Column(nullable = false, columnDefinition = "0")
+    private int projectCount;
+
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isSubscribed;
-
-    // 구글 로그인만 진행하므로 provider, provider_id 필드는 형식상 존재, 사용x, 만약 네이버, 카카오 로그인 확장시 추가 구현
 
 
     @OneToMany(mappedBy = "member")
@@ -86,7 +97,7 @@ public class Member {
 
 
     @Builder
-    public Member(String username, String email, String providerId, String provider, String profileUrl, Role role, String part, String tech) {
+    public Member(String username, String email, String providerId, String links, String provider, String profileUrl, Role role, String part, String techs, boolean isActive, boolean isSubscribed) {
         this.username = username;
         this.email = email;
         this.providerId = providerId;
@@ -94,8 +105,12 @@ public class Member {
         this.profileUrl = profileUrl;
         this.part = part;
         this.role = role;
-        this.tech = tech;
-        // 자기 소개는 프로필 페이지에서 수정하므로, builder에 추가 안함
+        this.techs = techs;
+        this.links = links;
+        this.isActive = isActive;
+        this.isSubscribed  = isSubscribed;
+        // 자기 소개는 프로필 페이지에서 수정하므로, builder에 추가 안함?
+        // links, techs는 넣을때 컴마 그대로 그냥 스트링으로 넣기
     }
 
 
