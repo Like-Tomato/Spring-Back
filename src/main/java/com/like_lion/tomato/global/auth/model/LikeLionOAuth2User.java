@@ -53,7 +53,7 @@ public class LikeLionOAuth2User implements OAuth2User {
         return this.userInfo.getUsername();
     }
 
-    public Long getId() {
+    public String getId() {
         return this.userInfo.getId();
     }
 
@@ -66,7 +66,7 @@ public class LikeLionOAuth2User implements OAuth2User {
     }
 
     public String getProfileImage() {
-        return this.userInfo.getProfileImageUrl();
+        return this.userInfo.getProfileUrl();
     }
 
     public String getProvider() {

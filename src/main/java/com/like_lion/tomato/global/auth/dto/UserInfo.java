@@ -10,19 +10,19 @@ import lombok.NoArgsConstructor;
 public class UserInfo {
     // OAuth2user에 담길 정보들
     // 인증에 관련된 최소 정보만 가지고 옴
-    private Long id;
+    private String id;
     private String username;
     private String email;
-    private String profileImageUrl; // (기본 구글, 이후 프로필 수정)
+    private String profileUrl; // (기본 구글, 이후 프로필 수정)
     private String role;
     private String provider;
 
     @Builder
-    public UserInfo(Long id, String username, String email, String profileImageUrl, String role, String provider) {
+    public UserInfo(String id, String username, String email, String profileUrl, String role, String provider) {
         this.id = id;
         this.username = username;
         this.email = email;
-        this.profileImageUrl = profileImageUrl;
+        this.profileUrl = profileUrl;
         this.role = role;
         this.provider = provider;
     }
@@ -31,9 +31,8 @@ public class UserInfo {
         return UserInfo.builder()
                 .id(member.getId())
                 .username(member.getUsername())
-                .profileImageUrl(member.getProfileImageUrl())
+                .profileUrl(member.getProfileUrl())
                 .provider(member.getProvider())
                 .build();
     }
-
 }
