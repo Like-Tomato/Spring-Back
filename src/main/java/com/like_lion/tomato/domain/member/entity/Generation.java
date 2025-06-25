@@ -23,9 +23,13 @@ public class Generation {
     @Column
     private int year;
 
+    @Enumerated(EnumType.STRING)
+    private Part part;
+
     @OneToMany(mappedBy = "generation")
     private List<MemberGeneration> memberGenerations = new ArrayList<>();
 
+    // 연관관계 편의 메서드
     public void addMemberGeneration(MemberGeneration memberGeneration) {
         memberGenerations.add(memberGeneration);
     }

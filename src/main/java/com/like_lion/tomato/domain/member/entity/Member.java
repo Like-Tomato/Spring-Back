@@ -51,9 +51,6 @@ public class Member {
     @Column(nullable = false)
     private String major;
 
-    @Column(length = 30)
-    private String part;
-
     @Column(nullable = false)
     private String techs;
 
@@ -97,13 +94,12 @@ public class Member {
 
 
     @Builder
-    public Member(String username, String email, String providerId, String links, String provider, String profileUrl, Role role, String part, String techs, boolean isActive, boolean isSubscribed) {
+    public Member(String username, String email, String providerId, String links, String provider, String profileUrl, Role role, String techs, boolean isActive, boolean isSubscribed) {
         this.username = username;
         this.email = email;
         this.providerId = providerId;
         this.provider = provider;
         this.profileUrl = profileUrl;
-        this.part = part;
         this.role = role;
         this.techs = techs;
         this.links = links;

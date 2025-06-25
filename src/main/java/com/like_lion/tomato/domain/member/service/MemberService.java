@@ -4,6 +4,7 @@ package com.like_lion.tomato.domain.member.service;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.domain.member.implement.MemberReader;
 import com.like_lion.tomato.domain.member.implement.MemberWriter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -24,13 +24,16 @@ public class MemberService {
 
 
     public MemberProfileListRes readAllMemberProfiles(int page, int size, String part, int year) {
+        Part partEnum = Part.valueOf(part.toUpperCase());
+        Integer yearInteger = year;
+
         // 페이지네이션 및 정렬(CreatedAt 기준 내림차순)
         PageRequest pageable = PageRequest.of(page - 1,
                 size,
                 Sort.by("CreatedAt").descending()); //반드시 SuperMapped로 생성 시각 만들기
 
-        //필터링 적용
-        Page<Member> memberPage = memberReader.findAllByPartAndYear(part, year, pageable);
+        // part, year은 Generation에 있으므로 MemberGeneration에서 JOIN하여 필터링
+        Page<Member> memberPage = memberReader.findAllByPartAndYear(partEnum, year, pageable);
 
         // Member -> DTO
         List<MemberProfileRes> memberProfiles = memberPage.getContent()

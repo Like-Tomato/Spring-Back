@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.member.implement;
 
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,7 @@ public class MemberReader {
         return memberRepository.findByEmail(email);
     }
 
-    public Page<Member> findAllByPartAndYear(String part, int year, Pageable pageable) {
+    public Page<Member> findAllByPartAndYear(Part part, Integer year, Pageable pageable) {
         return memberRepository.findAllByPartAndYear(part, year, pageable);
     }
 
