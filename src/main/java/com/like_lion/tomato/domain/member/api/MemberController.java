@@ -18,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/member")
-    public ApiResponse<MemberProfileListRes> getMemberProfiles(
+    public ApiResponse<MemberProfileListRes> getAllMemberProfiles(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "30") int size,
             @RequestParam(required = false) String part,
@@ -27,5 +27,8 @@ public class MemberController {
         MemberProfileListRes response = memberService.readAllMemberProfiles(page, size, part, year);
         return ApiResponse.success(response);
     }
+
+
+
 }
 
