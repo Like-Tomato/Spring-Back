@@ -1,5 +1,6 @@
 package com.like_lion.tomato.domain.session.entity.assignment;
 
+import com.like_lion.tomato.global.common.BaseEntitiy;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.Column;
@@ -14,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Assignment {
+public class Assignment extends BaseEntitiy {
 
     @DomainId(DomainType.ASSIGNMENT)
     @Id

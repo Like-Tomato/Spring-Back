@@ -2,6 +2,7 @@ package com.like_lion.tomato.domain.session.entity.session;
 
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.global.common.BaseEntitiy;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Session {
+public class Session extends BaseEntitiy {
 
     @DomainId(DomainType.SESSION)
     @Id
