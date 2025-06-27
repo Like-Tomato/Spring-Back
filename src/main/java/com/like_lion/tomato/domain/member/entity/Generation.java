@@ -17,7 +17,7 @@ import java.util.List;
 public class Generation {
 
     @Id
-    @DomainId(DomainType.Generation)
+    @DomainId(DomainType.GENERATION)
     @Column(name = "generation_id")
     private String id;
 
