@@ -13,7 +13,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RecruimentCommonQuestions {
+public class RecruimentCommonQuestion {
 
     @DomainId(DomainType.RECRUITMENT_COMMON_QUESTION)
     @Id
@@ -30,9 +30,9 @@ public class RecruimentCommonQuestions {
 
 
     @OneToMany(mappedBy = "recruitment_common_question")
-    private List<RecruimentCommonAnswers> answers = new ArrayList<>();
+    private List<RecruimentCommonAnswer> answers = new ArrayList<>();
 
-    public void addAnswer(RecruimentCommonAnswers answer) {
+    public void addAnswer(RecruimentCommonAnswer answer) {
         this.answers.add(answer);
         answer.setQuestion(this);
 

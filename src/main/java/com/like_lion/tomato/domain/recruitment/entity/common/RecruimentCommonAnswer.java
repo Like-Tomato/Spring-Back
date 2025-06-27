@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.recruitment.entity.part;
+package com.like_lion.tomato.domain.recruitment.entity.common;
 
 
 import com.like_lion.tomato.domain.recruitment.entity.Applycations;
@@ -12,15 +12,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RecruimentPartAnswers {
+public class RecruimentCommonAnswer {
 
-    @DomainId(DomainType.RECRUITMENT_PART_ANSWER)
+    @DomainId(DomainType.RECRUITMENT_COMMON_ANSWER)
     @Id
-    @Column(name = "recruiment_part_answer_id")
+    @Column(name = "recruiment_common_answer_id")
     private String id;
 
     @Column(length = 500)
     String answer;
+
 
     // 지원서 열람시 답변도 필요하므로 즉시조회
     @ManyToOne(fetch = FetchType.EAGER)
@@ -28,10 +29,10 @@ public class RecruimentPartAnswers {
     private Applycations applycation;
 
     @ManyToOne
-    @JoinColumn(name = "recruitment_part_question_id")
-    private RecruimentPartQuestions question;
+    @JoinColumn(name = "recruiment_common_question_id")
+    private RecruimentCommonQuestion question;
 
-    public void setQuestion(RecruimentPartQuestions question) {
+    public void setQuestion(RecruimentCommonQuestion question) {
         this.question = question;
     }
 }
