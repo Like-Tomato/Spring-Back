@@ -5,10 +5,10 @@ import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -27,6 +27,10 @@ public class Session {
 
     @Column(nullable = false)
     private int week;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Status status = Status.NOT_EXIST;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
