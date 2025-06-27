@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.archieve.entity;
+package com.like_lion.tomato.domain.archieve.entity.gallery;
 
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;

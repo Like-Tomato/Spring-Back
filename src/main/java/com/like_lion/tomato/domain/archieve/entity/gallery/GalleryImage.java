@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.archieve.entity;
+package com.like_lion.tomato.domain.archieve.entity.gallery;
 
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
