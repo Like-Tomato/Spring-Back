@@ -14,7 +14,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RecruimentPartQuestions {
+public class RecruimentPartQuestion {
 
     @DomainId(DomainType.RECRUITMENT_PART_QUESTION)
     @Id
@@ -39,9 +39,9 @@ public class RecruimentPartQuestions {
     private Member member;
 
     @OneToMany(mappedBy = "recruitment_part_question")
-    private List<RecruimentPartAnswers> answers = new ArrayList<>();
+    private List<RecruimentPartAnswer> answers = new ArrayList<>();
 
-    public void addAnswer(RecruimentPartAnswers answer) {
+    public void addAnswer(RecruimentPartAnswer answer) {
         answers.add(answer);
         answer.setQuestion(this);
     }
