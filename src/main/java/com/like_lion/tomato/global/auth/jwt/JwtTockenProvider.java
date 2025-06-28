@@ -85,7 +85,12 @@ public class JwtTockenProvider {
 
     public UserInfo extractMemberDTOFromAccessTocken(String accessToken) {
         return UserInfo.builder()
-                .id()
+                .id(this.getId(accessToken))
+                .username(this.getUsername(accessToken))
+                .provider(this.getProvider(accessToken))
+                .profileUrl(this.getProfileImage(accessToken))
+                .role(this.getRole(accessToken))
+                .build();
     }
 
     /**
