@@ -1,0 +1,4 @@
+jwt:
+  secret: 84AD9F449494E1BFCE814E4826A78
+  access-tocken-expiration: 3600000
+  refresh-tocken-expiration: 1209600000  # refresh 토큰 만료 시간 (예: 2주 = 1209600000ms)
