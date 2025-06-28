@@ -1,4 +1,4 @@
-package com.like_lion.tomato.global.response;
+package com.like_lion.tomato.global.exception.response;
 
 //@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ApiResponse<T>(

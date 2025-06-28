@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AuthErrorCode implements ErrorCode {
     // 인증 관련 오류
+    INVALID_VERIFICATION(401, "검증 정보가 올바르지 않습니다"),
     AUTH_FAILED(401, "인증에 실패하였습니다"),
     INVALID_TOKEN(401, "유효하지 않은 토큰입니다"),
+    UNSUPPORTED_TOCKEN(401, "지원하지 않는 토큰입니다"),
     EXPIRED_TOKEN(401, "만료된 토큰입니다"),
     INVALID_REFRESH_TOKEN(401, "유효하지 않은 리프레시 토큰입니다"),
     EXPIRED_REFRESH_TOKEN(401, "만료된 리프레시 토큰입니다"),
@@ -26,7 +28,11 @@ public enum AuthErrorCode implements ErrorCode {
     INVALID_REDIRECT_URI(400, "유효하지 않은 리다이렉트 URI입니다"),
 
     // 외부 인증 서버 오류
-    AUTH_SERVER_ERROR(500, "인증 서버 오류가 발생했습니다");
+    AUTH_SERVER_ERROR(500, "인증 서버 오류가 발생했습니다"),
+
+    // 조회 및 기타
+    REFRESH_TOCKEN_NOT_FOUND(404, "리프레시 토큰을 찾을 수 없습니다.");
+
 
     private final int status;
     private final String message;

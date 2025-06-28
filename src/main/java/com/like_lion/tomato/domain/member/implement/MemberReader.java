@@ -2,6 +2,8 @@ package com.like_lion.tomato.domain.member.implement;
 
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
+import com.like_lion.tomato.domain.member.exception.MemberException;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +30,9 @@ public class MemberReader {
         return memberRepository.findById(id);
     }
 
-    // findById, findByUsername, findByPart 등등 필요시 추가 구현 예정
-
-
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+    // 필요시 checkExistUsername 구현!
 }
