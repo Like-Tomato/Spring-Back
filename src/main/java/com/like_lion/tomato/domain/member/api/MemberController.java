@@ -3,7 +3,7 @@ package com.like_lion.tomato.domain.member.api;
 
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.service.MemberService;
-import com.like_lion.tomato.global.response.ApiResponse;
+import com.like_lion.tomato.global.exception.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
