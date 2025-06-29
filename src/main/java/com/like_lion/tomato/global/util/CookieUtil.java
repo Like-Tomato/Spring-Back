@@ -26,9 +26,8 @@ public class CookieUtil {
      * (서블릿 기반 컨트롤러에서 사용)
      *
      * @param response 응답 객체
-     * @param cookieName 쿠키 이름
-     * @param cookieValue 쿠키 값
-     * @param maxAgeSeconds 쿠키 만료 시간(초)
+     * @param refreshTocken
+     * @param maxAge 쿠키 만료 시간(초)
      */
     public static void setRefreshCookies(HttpServletResponse response,
                                          String refreshTocken,

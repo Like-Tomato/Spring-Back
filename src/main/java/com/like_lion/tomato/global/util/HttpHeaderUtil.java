@@ -46,5 +46,4 @@ public class HttpHeaderUtil {
     public static void deleteAccessTocken(HttpHeaders headers) {
         headers.remove(AUTHORIZATION_HEADER);
     }
-
 }
