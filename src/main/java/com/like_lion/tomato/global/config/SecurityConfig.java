@@ -1,5 +1,7 @@
 package com.like_lion.tomato.global.config;
 
+import com.like_lion.tomato.global.auth.handler.JwtLogoutSuccessHandler;
+import com.like_lion.tomato.global.auth.handler.OAuth2LoginSuccessHandler;
 import com.like_lion.tomato.global.auth.service.LikeLionOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final LikeLionOauth2UserService likeLionOauth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -41,12 +45,19 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
-                //이후 LoginSuccessHandler, LoginFailerHandler 추가!
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig
-                                        .userService(likeLionOauth2UserService)));
-                // .successHandler(oAuth2LoginSuccessHandler);
+                                        .userService(likeLionOauth2UserService))
+                        .successHandler(oAuth2LoginSuccessHandler))
+                .logout(logout ->
+                        logout
+                                .clearAuthentication(true)
+                                .invalidateHttpSession(true)
+                                .logoutUrl("/api/v1/auth/logout")
+                                .logoutSuccessHandler(jwtLogoutSuccessHandler)
+                );
+
 
         // addFilterBefore
         // exceptionHandling 추가하기!
