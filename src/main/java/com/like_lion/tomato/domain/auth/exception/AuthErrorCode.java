@@ -18,6 +18,7 @@ public enum AuthErrorCode implements ErrorCode {
     INVALID_REFRESH_TOKEN(401, "유효하지 않은 리프레시 토큰입니다"),
     EXPIRED_REFRESH_TOKEN(401, "만료된 리프레시 토큰입니다"),
     GOOGLE_AUTH_FAILED(401, "구글 인증에 실패했습니다"),
+    OAUTH2_UNAUTHORIZED(401, "OAuth2 인증이 필요합니다. 로그인 후 다시 시도해 주세요"),
 
     // 권한 관련 오류
     REFRESH_TOKEN_REVOKED(403, "폐기된 리프레시 토큰입니다"),
