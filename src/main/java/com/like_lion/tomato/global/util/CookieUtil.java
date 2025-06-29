@@ -1,7 +1,5 @@
 package com.like_lion.tomato.global.util;
 
-import static com.like_lion.tomato.global.auth.implement.JwtTockenProvider.FRFRESH
-
 import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
 import com.like_lion.tomato.domain.auth.exception.AuthException;
 import jakarta.servlet.http.Cookie;
