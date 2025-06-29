@@ -13,4 +13,5 @@ public interface RefreshTockenRepository extends JpaRepository<RefreshTocken, St
     Optional<RefreshTocken> findByUsername(String username);
 
 
+    Optional<RefreshTocken> findByUserId(String userId);
 }

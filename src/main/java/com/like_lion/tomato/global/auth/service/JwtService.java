@@ -15,8 +15,6 @@ import com.like_lion.tomato.domain.auth.repository.RefreshTockenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,9 +85,6 @@ public class JwtService {
         refreshTockenWriter.upsetRefreshTocken(tockenDto);
         return tockenDto;
     }
-
-
-    // setCookie 구현(유틸 패키지로 빼기!)
 
     /**
      * Bearer Prefix를 포함한 값을 전달받으면 토큰만을 추출하여 반환

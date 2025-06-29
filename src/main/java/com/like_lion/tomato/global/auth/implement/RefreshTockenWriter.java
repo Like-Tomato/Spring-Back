@@ -17,7 +17,9 @@ public class RefreshTockenWriter {
     public void upsetRefreshTocken(TockenDto tockenDto) {
         refreshTockenReader.findOptionalByUsername(tockenDto.getUsername())
                 .ifPresentOrElse(
+                        // 존재하면 업데이트
                         tocken -> tocken.updatePayload(tockenDto.getRefreshTocken()),
+                        // 존재하지 않으면 생성
                         () -> this.create(tockenDto)
                 );
     }

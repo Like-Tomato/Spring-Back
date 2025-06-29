@@ -132,6 +132,4 @@ public class JwtTockenProvider {
 
     //필요시 다른 getter 추가 구현
 
-
-
 }

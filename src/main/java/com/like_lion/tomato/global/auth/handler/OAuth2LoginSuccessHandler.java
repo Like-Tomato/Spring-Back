@@ -1,8 +1,11 @@
 package com.like_lion.tomato.global.auth.handler;
 
 import com.like_lion.tomato.global.auth.dto.TockenDto;
+import com.like_lion.tomato.global.auth.implement.JwtTockenProvider;
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
 import com.like_lion.tomato.global.auth.service.JwtService;
+import com.like_lion.tomato.global.util.CookieUtil;
+import com.like_lion.tomato.global.util.HttpHeaderUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,19 +22,27 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
+    private final JwtService jwtService;
+    private final JwtTockenProvider jwtTockenProvider;
+
     @Value("${client.url}")
     private String clientUrl;
+    @Value("${jwt.refresh-tocken-expiration}")
+    private Long refreshTokenExpiration;
 
-    private final JwtService jwtService;
 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         LikeLionOAuth2User principal = (LikeLionOAuth2User) authentication.getPrincipal();
         TockenDto tockenDto = jwtService.doTockenGenerationProcess(principal);
-        jwtService.setCookie(tockenDto, response);
-        String targetUri = this.createUri(tockenDto, principal.getId());
-        response.sendRedirect(targetUri);
+
+        HttpHeaderUtil.setAccessTocken(response, tockenDto.getAccessTocken());
+        // 리프레시 토큰: 쿠키 설정 (만료 시간은 밀리초 → 초 변환)
+        int refreshMaxAge = (int) (jwtTockenProvider.getRefreshTockenExpiration() / 1000);
+        CookieUtil.setRefreshCookies(response, tockenDto.getRefreshTocken(), refreshMaxAge);
+
+        response.sendRedirect(createUri(tockenDto, principal.getId()));
     }
 
     private String createUri(TockenDto tockenDto, String userId) {
