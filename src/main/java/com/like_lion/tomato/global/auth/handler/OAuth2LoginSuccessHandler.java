@@ -27,9 +27,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Value("${client.url}")
     private String clientUrl;
-    @Value("${jwt.refresh-tocken-expiration}")
-    private Long refreshTokenExpiration;
-
 
 
     @Override

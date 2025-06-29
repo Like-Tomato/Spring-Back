@@ -3,9 +3,13 @@ package com.like_lion.tomato.global.util;
 import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
 import com.like_lion.tomato.domain.auth.exception.AuthException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 
+import static com.like_lion.tomato.global.auth.implement.JwtTockenProvider.BEARER_PREFIX;import static com.like_lion.tomato.global.auth.implement.JwtTockenProvider.BEARER_PREFIX;
+
 public class HttpHeaderUtil {
+
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -16,12 +20,11 @@ public class HttpHeaderUtil {
     /**
      * 액세스 토큰을 Authorization 헤더에 추가
      *
-     * @param headers      응답 헤더 객체
-     * @param bearerPrefix BEARER 접두사
+     * @param response    응답 헤더 객체
      * @param accessToken  액세스 토큰 값
      */
-    public static void setAccessTocken(HttpHeaders headers, String bearerPrefix, String accessToken) {
-        headers.set(AUTHORIZATION_HEADER, bearerPrefix + accessToken);
+    public static void setAccessTocken(HttpServletResponse response, String accessToken) {
+        response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
     }
 
     /**
