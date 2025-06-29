@@ -1,6 +1,10 @@
 package com.like_lion.tomato.global.config;
 
+import com.like_lion.tomato.domain.auth.filter.JwtExceptionFilter;
+import com.like_lion.tomato.domain.auth.filter.JwtVerificationFilter;
+import com.like_lion.tomato.global.auth.handler.JwtAccessDeniedHandler;
 import com.like_lion.tomato.global.auth.handler.JwtLogoutSuccessHandler;
+import com.like_lion.tomato.global.auth.handler.OAuth2EntryPorint;
 import com.like_lion.tomato.global.auth.handler.OAuth2LoginSuccessHandler;
 import com.like_lion.tomato.global.auth.service.LikeLionOauth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +16,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -24,7 +29,12 @@ public class SecurityConfig {
 
     private final LikeLionOauth2UserService likeLionOauth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2EntryPorint oAuth2EntryPorint;
     private final JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtVerificationFilter jwtVerificationFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -33,7 +43,14 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtVerificationFilter jwtVerificationFilter, JwtExceptionFilter jwtExceptionFilter) throws Exception {
+
+        // 경로별 인가: 추후 자세히 설정 예정!
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/api/v1").permitAll());
+
+
         http
                 .csrf(AbstractHttpConfigurer::disable);
 
@@ -56,15 +73,16 @@ public class SecurityConfig {
                                 .invalidateHttpSession(true)
                                 .logoutUrl("/api/v1/auth/logout")
                                 .logoutSuccessHandler(jwtLogoutSuccessHandler)
-                );
+                )
+                .addFilterBefore(jwtVerificationFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+
+                .addFilterBefore(jwtExceptionFilter, JwtVerificationFilter.class)
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint(oAuth2EntryPorint)
+                                .accessDeniedHandler(jwtAccessDeniedHandler));
 
 
-        // addFilterBefore
-        // exceptionHandling 추가하기!
-        // 경로별 인가: 추후 자세히 설정 예정!
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1").permitAll());
 
         return http.build();
     }
