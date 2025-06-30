@@ -67,6 +67,18 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<MemberGeneration> memberGenerations = new ArrayList<>();
 
+    @Column
+    private String phone;
+
+    @Column
+    private String studentId;
+
+    @Enumerated(EnumType.STRING)
+    private Part part;
+
+    @Column
+    private String portfolioUrl;
+
     // 과제 구현 후 양방향 매핑 예정
     // my_page에 과제칸이 존재하므로 즉시조회 예정!
     //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -83,10 +95,10 @@ public class Member {
     }
 
     /**
-    public void addassignment(Assignment assignment) {
-        assignments.add(assignment);
-        assignment.setMember(this);
-    }
+     public void addassignment(Assignment assignment) {
+     assignments.add(assignment);
+     assignment.setMember(this);
+     }
      **/
 
     // Service에서  .orElseThrow(() -> new MemberException(MemberErrorCode.GENERATION_NOT_FOUND)) 던지기 위한 설계
@@ -111,5 +123,24 @@ public class Member {
         this.isSubscribed  = isSubscribed;
         // 자기 소개는 프로필 페이지에서 수정하므로, builder에 추가 안함?
         // links, techs는 넣을때 컴마 그대로 그냥 스트링으로 넣기
+    }
+
+    public void updateApplicationInfo(String username, String phone, String studentId,
+                                      String major, Part part, String portfolioUrl) {
+        this.username = username;
+        this.phone = phone;
+        this.studentId = studentId;
+        this.major = major;
+        this.part = part;
+        this.portfolioUrl = portfolioUrl;
+    }
+
+    public boolean hasGuestRoleOrHigher() {
+        return this.role != null &&
+                (this.role == Role.ROLE_GUEST ||
+                        this.role == Role.ROLE_MEMBER ||
+                        this.role == Role.ROLE_ADMIN ||
+                        this.role == Role.ROLE_MASTER
+                );
     }
 }
