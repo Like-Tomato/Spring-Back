@@ -34,6 +34,7 @@ public enum AuthErrorCode implements ErrorCode {
     AUTH_SERVER_ERROR(500, "인증 서버 오류가 발생했습니다"),
 
     // 조회 및 기타
+    GOOGLE_CLIENT_REGISTRATION_NOT_FOUND(404, "구글 ClientRegistration을 찾을 수 없습니다"),
     ACCESS_TOCKEN_NOT_FOUND(404, "엑세스 토큰을 찾을 수 없습니다"),
     REFRESH_TOCKEN_NOT_FOUND(404, "리프레시 토큰을 찾을 수 없습니다"),
     COOKIE_NOT_FOUND(404, "쿠키를 찾을 수 없습니다");

@@ -31,7 +31,7 @@ public class JwtLogoutSuccessHandler implements LogoutSuccessHandler {
         response.setContentType("application/json; charset=utf-8");
         response.setCharacterEncoding("UTF-8");
 
-        ApiResponse<ApiResponse.MessageData> apiResponse = ApiResponse.successWithMessage("로그아웃이 완료되었습니다.");
+        ApiResponse<ApiResponse.MessageData> apiResponse = ApiResponse.success("로그아웃이 완료되었습니다.");
         objectMapper.writeValue(response.getWriter(), response);
     }
 }
