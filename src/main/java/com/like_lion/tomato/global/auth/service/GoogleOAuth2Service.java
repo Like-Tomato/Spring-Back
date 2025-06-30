@@ -19,12 +19,15 @@ public class GoogleOAuth2Service {
 
     private final ClientRegistrationRepository clientRegistrationRepository;
 
-
     /**
-     * /login/google 요청시 앱 서버에서 직접 리디렉트 URI를 만들어 리디렉트시키는 방식
-     * ResponseApi 객체가 생성되면 ResponseEntity 대신 ResponseApi로 수정할 예정!
-     * (이후 아이디가 존재하면 바로 로그인 처리를, 존재하지 않으면 로그인 창으로 이동시킬 예정!)
-     * @return
+     * 구글 OAuth2 인증 페이지 URL을 생성하여 반환합니다.
+     * <p>
+     * 사용자가 구글 로그인을 요청할 때, 서버에서 직접 생성한 state 값을 포함한
+     * 구글 인증 페이지 URL을 만들어 클라이언트에 제공합니다.
+     * </p>
+     *
+     * @return 생성된 구글 인증 페이지 URL 문자열
+     * @throws AuthException 구글 ClientRegistration이 등록되어 있지 않은 경우 발생
      */
     public String generateGoogleAuthUrl() {
 
