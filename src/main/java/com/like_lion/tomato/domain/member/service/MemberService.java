@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.member.service;
 
 
+import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Generation;
@@ -25,6 +26,7 @@ public class MemberService {
 
     private final MemberReader memberReader;
     private final MemberWriter memberWriter;
+    // private final FileUploadService fileUploadService; 의존성 추가 후 구현!
 
 
     @Transactional
@@ -62,6 +64,24 @@ public class MemberService {
                 .orElseThrow(
                         () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
                 );
+        return MemberProfileRes.from(member);
+    }
+
+    @Transactional
+    public MemberProfileRes update(String memberId, UpdateMemberProfileReq request) {
+        Member member = memberReader.findOptionById(memberId)
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
+                );
+        // 프로필 이미지 업로드 로직 구현!
+        String profileUrl = member.getProfileUrl();
+        if(profileUrl != null && !profileUrl.isEmpty()) {
+            // profileUrl = fileUploadService.upload(request.getProfileImg());
+            // 의존성 추가 구현 후 과련 예외처리도 진행!
+        }
+
+        //member.update();
+        memberWriter.save(member);
         return MemberProfileRes.from(member);
     }
 }

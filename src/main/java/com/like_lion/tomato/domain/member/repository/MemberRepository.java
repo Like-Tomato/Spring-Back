@@ -16,6 +16,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findById(String id);
     Optional<Member> findByUsername(String username);
 
+
     /** 페이지네이션 및 정렬(CreatedAt 기준 내림차순)
      * 1. 권한이 MEMBER 이상인 회원(아기사자, 운영진, 마스터)만 조회
      * 2. 기수가 중복되는 경우, MemberService에서 stream으로 필터링

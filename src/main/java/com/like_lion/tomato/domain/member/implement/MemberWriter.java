@@ -25,6 +25,7 @@ public class MemberWriter {
 
         //최초 로그인시 Provider 이름으로 설정!(이후 프로필에서 수정)
         String providerUserName = oAuth2ProviderUser.getUsername();
+        //setName으로설정?
         Member member = oAuth2ProviderUser.toMember(role);
         memberRepository.save(member);
         return member;
@@ -33,6 +34,10 @@ public class MemberWriter {
     // 이후 어드민 계정 판단 방식!(최초 어드민 계정!)
     private boolean isAdmin(OAuth2ProviderUser oAuth2ProviderUser) {
         return false;
+    }
+
+    public void save(Member member) {
+        memberRepository.save(member);
     }
 
     /** 추후 구현 예정!
