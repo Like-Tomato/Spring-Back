@@ -9,6 +9,8 @@ public record ApiResponse<T>(
 
     public record MessageData(String message) {}
 
+    public record MessageDataWithData<T>(String message, T data) {}
+
     public record ErrorDetails(
             String code,
             String message,
@@ -28,8 +30,13 @@ public record ApiResponse<T>(
     }
 
     // 메시지만 있는 성공 응답 팩토리 메서드
-    public static ApiResponse<MessageData> successWithMessage(String message) {
+    public static ApiResponse<MessageData> success(String message) {
         return new ApiResponse<>("success", new MessageData(message), null);
+    }
+
+    // 메시지와 데이터 모두 있는 성공 응답
+    public static <T> ApiResponse<MessageDataWithData<T>> success(String message, T data) {
+        return new ApiResponse<>("success", new MessageDataWithData<>(message, data), null);
     }
 
     public static <T> ApiResponse<T> error(String code, String message) {

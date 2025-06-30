@@ -1,17 +1,20 @@
 package com.like_lion.tomato.domain.auth.api;
 
+import com.like_lion.tomato.global.auth.dto.TockenDto;
+import com.like_lion.tomato.global.auth.implement.JwtTockenProvider;
+import com.like_lion.tomato.global.auth.service.GoogleOAuth2Service;
+import com.like_lion.tomato.global.auth.service.JwtService;
+import com.like_lion.tomato.global.exception.response.ApiResponse;
+import com.like_lion.tomato.global.util.CookieUtil;
+import com.like_lion.tomato.global.util.HttpHeaderUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -19,49 +22,48 @@ import java.net.URI;
 @RestController
 public class AuthController {
 
-    private final ClientRegistrationRepository clientRegistrationRepository;
+    private final GoogleOAuth2Service googleOAuth2Service;
+    private final JwtService jwtService;
+    private final JwtTockenProvider jwtTockenProvider;
 
 
-    /**
-     * /login/google 요청시 앱 서버에서 직접 리디렉트 URI를 만들어 리디렉트시키는 방식
-     * ResponseApi 객체가 생성되면 ResponseEntity 대신 ResponseApi로 수정할 예정!
-     * (이후 아이디가 존재하면 바로 로그인 처리를, 존재하지 않으면 로그인 창으로 이동시킬 예정!)
-     * @return
-     */
     @GetMapping("/login/google")
-    public ResponseEntity<Void> googleLogin() {
-        ClientRegistration registration = clientRegistrationRepository.findByRegistrationId("google");
-        String authUrl = UriComponentsBuilder.fromUriString(registration.getProviderDetails().getAuthorizationUri())
-                .queryParam("client_id", registration.getClientId())
-                .queryParam("redirect_uri", registration.getRedirectUri())
-                .queryParam("response_type", "code")
-                .queryParam("scope", String.join(" ", registration.getScopes()))
-                // state는 보안상 랜덤값으로 생성 권장
-                .queryParam("state", "random-generated-state")
-                .build()
-                .toUriString();
-        return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .location(URI.create(authUrl))
-                .build();
+    public ApiResponse<ApiResponse.MessageDataWithData<String>> googleLogin() {
+        String authUri = googleOAuth2Service.generateGoogleAuthUrl();
+        return ApiResponse.success(
+                "구글 로그인 URL이 생성되었습니다.",
+                authUri
+                );
     }
 
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout() {
-        return null;
+    public ApiResponse<ApiResponse.MessageData> logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    )
+    {
+        String refreshTocken = CookieUtil.getRefreshTocken(request);
+        jwtService.logout(refreshTocken);
+        CookieUtil.deleteRefreshCookie(response);
+        return ApiResponse.success("로그아웃이 완료되었습니다.");
     }
 
 
     @GetMapping("/refresh")
-    public ResponseEntity<Void> refresh() {
-        return null;
+    public ApiResponse<ApiResponse.MessageData> refresh(
+            HttpServletRequest request,
+            HttpServletResponse response
+    )
+    {
+        String refreshTocken = CookieUtil.getRefreshTocken(request);
+        TockenDto tockenDto = jwtService.tockenRefresh(refreshTocken);
+
+        // 토큰 리프레시 jwtService에서 모듈화 로직!
+        HttpHeaderUtil.setAccessTocken(response, tockenDto.getAccessTocken());
+        int refreshMaxAge = (int) (jwtTockenProvider.getRefreshTockenExpiration() / 1000);
+        CookieUtil.setRefreshCookies(response, tockenDto.getRefreshTocken(), refreshMaxAge);
+
+        return ApiResponse.success("토큰 리프레시 성공");
     }
-
-    @GetMapping("/me")
-    public ResponseEntity<Void> me() {
-        return null;
-    }
-
-
-
 }
