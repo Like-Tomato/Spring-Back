@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.member.service;
 
 
+import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Generation;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,8 +26,10 @@ public class MemberService {
 
     private final MemberReader memberReader;
     private final MemberWriter memberWriter;
+    // private final FileUploadService fileUploadService; 의존성 추가 후 구현!
 
 
+    @Transactional
     public MemberProfileListRes readAllMemberProfiles(int page, int size, String part, int year) {
 
         // 유효성 검사(나중에 Valid로 리팩터링 예정)
@@ -34,41 +38,50 @@ public class MemberService {
 
         if(!Generation.isValidYear(year)) throw new MemberException(MemberErrorCode.INVALID_YEAR);
 
+
         // MemberProfileRequest에서 Valid로 유효성 검사 구현!
         Integer yearInteger = year;
 
         // 페이지네이션 및 정렬(CreatedAt 기준 내림차순)
         PageRequest pageable = PageRequest.of(page - 1,
                 size,
-                Sort.by("CreatedAt").descending()); //반드시 SuperMapped로 생성 시각 만들기
+                Sort.by("CreatedAt").descending());
 
-        // part, year은 Generation에 있으므로 MemberGeneration에서 JOIN하여 필터링
         Page<Member> memberPage = memberReader.findAllByPartAndYear(partEnum, yearInteger, pageable);
 
         // Member -> DTO
-        List<MemberProfileRes> memberProfiles = memberPage.getContent()
-                .stream()
-                .map(MemberProfileRes::from)
-                .toList();
-
-        // 임시 필터 정보 (실제로는 DB 집계 쿼리 필요)
-        List<MemberProfileListRes.PositionCount> positions = List.of(
-                new MemberProfileListRes.PositionCount("FRONTEND", 12),
-                new MemberProfileListRes.PositionCount("BACKEND", 8)
-        );
-        List<MemberProfileListRes.SkillCount> skills = List.of(
-                new MemberProfileListRes.SkillCount("React", 15),
-                new MemberProfileListRes.SkillCount("Node.js", 10)
-        );
-
         return MemberProfileListRes.from(
-                memberProfiles,
-                page,
-                size,
-                memberPage.getTotalElements(),
-                memberPage.getTotalPages(),
-                positions,
-                skills
+                memberPage.getContent()
+                        .stream()
+                        .map(MemberProfileRes::from)
+                        .toList()
         );
+    }
+
+    @Transactional
+    public MemberProfileRes readMemberProfile(String memberId) {
+        Member member =  memberReader.findOptionById(memberId)
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
+                );
+        return MemberProfileRes.from(member);
+    }
+
+    @Transactional
+    public MemberProfileRes update(String memberId, UpdateMemberProfileReq request) {
+        Member member = memberReader.findOptionById(memberId)
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
+                );
+        // 프로필 이미지 업로드 로직 구현!
+        String profileUrl = member.getProfileUrl();
+        if(profileUrl != null && !profileUrl.isEmpty()) {
+            // profileUrl = fileUploadService.upload(request.getProfileImg());
+            // 의존성 추가 구현 후 과련 예외처리도 진행!
+        }
+
+        //member.update();
+        memberWriter.save(member);
+        return MemberProfileRes.from(member);
     }
 }
