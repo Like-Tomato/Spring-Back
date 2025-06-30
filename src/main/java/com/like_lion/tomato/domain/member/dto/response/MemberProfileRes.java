@@ -50,7 +50,7 @@ public class MemberProfileRes {
                 .introduce(member.getIntroduce())
                 .links(List.of(member.getLinks()))
                 .profileUrl(member.getProfileUrl())
-                .part(member.getPart())
+                .part(String.valueOf(member.getPart()))
                 .skills(List.of(member.getTechs()))
                 .projectCount(member.getProjectCount())
                 .isSubcribed(member.isSubscribed())
