@@ -38,7 +38,7 @@ public class GoogleOAuth2Service {
         String state = java.util.UUID.randomUUID().toString();
         return UriComponentsBuilder.fromUriString(clientRegistration.getProviderDetails().getAuthorizationUri())
                 .queryParam("client_id", clientRegistration.getClientId())
-                .queryParam("ridirect_uri", clientRegistration.getRedirectUri())
+                .queryParam("redirect_uri", clientRegistration.getRedirectUri())
                 .queryParam("response_type", "code")
                 .queryParam("scope", String.join(" "), clientRegistration.getScopes())
                 .queryParam("state", state)
