@@ -44,33 +44,15 @@ public class MemberService {
                 size,
                 Sort.by("CreatedAt").descending());
 
-        // part, year은 Generation에 있으므로 MemberGeneration에서 JOIN하여 필터링
+        // part, year은 Generation에 있으므로 MemberGeneration에서 JOIN하여 필터링하여 조회
         Page<Member> memberPage = memberReader.findAllByPartAndYear(partEnum, yearInteger, pageable);
 
         // Member -> DTO
-        List<MemberProfileRes> memberProfiles = memberPage.getContent()
-                .stream()
-                .map(MemberProfileRes::from)
-                .toList();
-
-        // 임시 필터 정보 (실제로는 DB 집계 쿼리 필요)
-        List<MemberProfileListRes.PositionCount> positions = List.of(
-                new MemberProfileListRes.PositionCount("FRONTEND", 12),
-                new MemberProfileListRes.PositionCount("BACKEND", 8)
-        );
-        List<MemberProfileListRes.SkillCount> skills = List.of(
-                new MemberProfileListRes.SkillCount("React", 15),
-                new MemberProfileListRes.SkillCount("Node.js", 10)
-        );
-
         return MemberProfileListRes.from(
-                memberProfiles,
-                page,
-                size,
-                memberPage.getTotalElements(),
-                memberPage.getTotalPages(),
-                positions,
-                skills
+                memberPage.getContent()
+                        .stream()
+                        .map(MemberProfileRes::from)
+                        .toList()
         );
     }
 }
