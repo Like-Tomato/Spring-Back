@@ -43,7 +43,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtVerificationFilter jwtVerificationFilter, JwtExceptionFilter jwtExceptionFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         // 경로별 인가: 추후 자세히 설정 예정!
         http
