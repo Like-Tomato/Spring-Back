@@ -23,9 +23,6 @@ public class MemberWriter {
                 ? Role.ROLE_ADMIN
                 : Role.ROLE_GUEST;
 
-        //최초 로그인시 Provider 이름으로 설정!(이후 프로필에서 수정)
-        String providerUserName = oAuth2ProviderUser.getUsername();
-        //setName으로설정?
         Member member = oAuth2ProviderUser.toMember(role);
         memberRepository.save(member);
         return member;
