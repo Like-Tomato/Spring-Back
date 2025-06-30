@@ -1,0 +1,19 @@
+package com.like_lion.tomato.domain.session.repository;
+
+import com.like_lion.tomato.domain.session.entity.session.Session;
+import com.like_lion.tomato.domain.session.entity.session.Session.Part;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
+public interface SessionRepository extends JpaRepository<Session, String> {
+
+    @Query("""
+        SELECT s FROM Session s
+        WHERE (:part IS NULL OR s.part = :part)
+        ORDER BY s.startedAt DESC
+    """)
+    List<Session> findAllByPartOrAll(@Param("part") Part part);
+}
