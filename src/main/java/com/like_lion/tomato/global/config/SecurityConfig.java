@@ -60,10 +60,10 @@ public class SecurityConfig {
         // 경로별 인가
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1").permitAll()
-                        .requestMatchers("/api/v1/master/**").hasAnyRole("MASTER")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1", "/api/v1/member").permitAll()
                         .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/master/**").hasAnyRole("MASTER")
                         .anyRequest().authenticated());
 
 

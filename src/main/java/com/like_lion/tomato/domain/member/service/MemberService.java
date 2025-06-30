@@ -37,7 +37,6 @@ public class MemberService {
         if(!Generation.isValidYear(year)) throw new MemberException(MemberErrorCode.INVALID_YEAR);
 
 
-
         // MemberProfileRequest에서 Valid로 유효성 검사 구현!
         Integer yearInteger = year;
 
@@ -55,5 +54,14 @@ public class MemberService {
                         .map(MemberProfileRes::from)
                         .toList()
         );
+    }
+
+    @Transactional
+    public MemberProfileRes readMemberProfile(String memberId) {
+        Member member =  memberReader.findOptionById(memberId)
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
+                );
+        return MemberProfileRes.from(member);
     }
 }
