@@ -17,6 +17,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    
     @GetMapping("/member")
     public ApiResponse<MemberProfileListRes> getMemberProfiles(
             @RequestParam(defaultValue = "1") int page,

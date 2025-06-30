@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.auth.filter;
+package com.like_lion.tomato.global.auth.filter;
 
 import ch.qos.logback.core.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;

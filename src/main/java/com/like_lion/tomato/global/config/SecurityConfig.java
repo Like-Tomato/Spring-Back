@@ -1,7 +1,7 @@
 package com.like_lion.tomato.global.config;
 
-import com.like_lion.tomato.domain.auth.filter.JwtExceptionFilter;
-import com.like_lion.tomato.domain.auth.filter.JwtVerificationFilter;
+import com.like_lion.tomato.global.auth.filter.JwtExceptionFilter;
+import com.like_lion.tomato.global.auth.filter.JwtVerificationFilter;
 import com.like_lion.tomato.global.auth.handler.JwtAccessDeniedHandler;
 import com.like_lion.tomato.global.auth.handler.JwtLogoutSuccessHandler;
 import com.like_lion.tomato.global.auth.handler.OAuth2EntryPorint;
@@ -10,6 +10,8 @@ import com.like_lion.tomato.global.auth.service.LikeLionOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -41,14 +43,28 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+                .role("MASTER").implies("ADMIN")
+                .role("ADMIN").implies("MEMBER")
+                .role("MEMBER").implies("GUEST")
+                .build();
+    }
+
+
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtVerificationFilter jwtVerificationFilter, JwtExceptionFilter jwtExceptionFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // 경로별 인가: 추후 자세히 설정 예정!
+        // 경로별 인가
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1").permitAll());
+                        .requestMatchers("/api/v1").permitAll()
+                        .requestMatchers("/api/v1/master/**").hasAnyRole("MASTER")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
+                        .anyRequest().authenticated());
 
 
         http
