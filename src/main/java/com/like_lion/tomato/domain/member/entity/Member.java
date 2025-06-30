@@ -43,26 +43,24 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Enumerated(EnumType.STRING)
+    private Part part;
+
     @Column
     private String links;
-
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE" )
-    private boolean isActive;
 
     @Column(nullable = false)
     private String major;
 
-    @Column(nullable = false)
-    private String techs;
 
     @Column(length = 200)
     private String introduce;
 
-    @Column(nullable = false, columnDefinition = "0")
-    private int projectCount;
-
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isSubscribed;
+
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isApplied;
 
     @OneToMany(mappedBy = "member")
     private List<MemberGeneration> memberGenerations = new ArrayList<>();
@@ -98,18 +96,18 @@ public class Member {
     }
 
     @Builder
-    public Member(String username, String email, String providerId, String links, String provider, String profileUrl, Role role, String techs, boolean isActive, boolean isSubscribed) {
+    public Member(String username, String email, String providerId, String major, String introduce, String links, String provider, String profileUrl, Role role, Part part, boolean isApplied, boolean isSubscribed) {
         this.username = username;
         this.email = email;
         this.providerId = providerId;
         this.provider = provider;
         this.profileUrl = profileUrl;
         this.role = role;
-        this.techs = techs;
+        this.part = part;
+        this.introduce = introduce;
+        this.major = major;
         this.links = links;
-        this.isActive = isActive;
         this.isSubscribed  = isSubscribed;
-        // 자기 소개는 프로필 페이지에서 수정하므로, builder에 추가 안함?
-        // links, techs는 넣을때 컴마 그대로 그냥 스트링으로 넣기
+        this.isApplied = isApplied;
     }
 }

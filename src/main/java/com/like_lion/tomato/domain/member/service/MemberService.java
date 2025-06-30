@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class MemberService {
     private final MemberWriter memberWriter;
 
 
+    @Transactional
     public MemberProfileListRes readAllMemberProfiles(int page, int size, String part, int year) {
 
         // 유효성 검사(나중에 Valid로 리팩터링 예정)
@@ -40,7 +42,7 @@ public class MemberService {
         // 페이지네이션 및 정렬(CreatedAt 기준 내림차순)
         PageRequest pageable = PageRequest.of(page - 1,
                 size,
-                Sort.by("CreatedAt").descending()); //반드시 SuperMapped로 생성 시각 만들기
+                Sort.by("CreatedAt").descending());
 
         // part, year은 Generation에 있으므로 MemberGeneration에서 JOIN하여 필터링
         Page<Member> memberPage = memberReader.findAllByPartAndYear(partEnum, yearInteger, pageable);
