@@ -36,6 +36,8 @@ public class MemberService {
 
         if(!Generation.isValidYear(year)) throw new MemberException(MemberErrorCode.INVALID_YEAR);
 
+
+
         // MemberProfileRequest에서 Valid로 유효성 검사 구현!
         Integer yearInteger = year;
 
@@ -44,7 +46,6 @@ public class MemberService {
                 size,
                 Sort.by("CreatedAt").descending());
 
-        // part, year은 Generation에 있으므로 MemberGeneration에서 JOIN하여 필터링하여 조회
         Page<Member> memberPage = memberReader.findAllByPartAndYear(partEnum, yearInteger, pageable);
 
         // Member -> DTO

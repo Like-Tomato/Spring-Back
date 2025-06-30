@@ -52,7 +52,6 @@ public class Member {
     @Column(nullable = false)
     private String major;
 
-
     @Column(length = 200)
     private String introduce;
 
@@ -61,6 +60,16 @@ public class Member {
 
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isApplied;
+
+    // 최신 기수를 따로 저장하는 필드(DB에는 저장안함)
+    @Transient
+    private Integer latestYear;
+
+    @PostLoad
+    private void setLatestYear() {
+        this.latestYear = this.getLatestGenerationYearOptionalInteger().orElse(null);
+    }
+
 
     @OneToMany(mappedBy = "member")
     private List<MemberGeneration> memberGenerations = new ArrayList<>();
@@ -88,8 +97,8 @@ public class Member {
      **/
 
     // Service에서  .orElseThrow(() -> new MemberException(MemberErrorCode.GENERATION_NOT_FOUND)) 던지기 위한 설계
-    public Optional<Integer> getLatestGenerationYearOptionalInteger(Member member) {
-        return member.getMemberGenerations().stream()
+    private Optional<Integer> getLatestGenerationYearOptionalInteger() {
+        return this.getMemberGenerations().stream()
                 .map(MemberGeneration::getGeneration)
                 .map(Generation::getYear)
                 .max(Integer::compareTo);

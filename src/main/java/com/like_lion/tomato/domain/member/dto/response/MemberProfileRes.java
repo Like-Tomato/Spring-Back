@@ -50,6 +50,7 @@ public class MemberProfileRes {
                 .username(member.getUsername())
                 .major(member.getMajor())
                 .email(member.getEmail())
+                .year(member.getLatestYear())
                 .introduce(member.getIntroduce())
                 .links(member.getLinks())
                 .profileUrl(member.getProfileUrl())
