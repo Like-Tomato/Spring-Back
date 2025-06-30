@@ -59,4 +59,7 @@ public class MemberProfileRes {
                 .isApplied(member.isApplied())
                 .build();
     }
+
+
+
 }
