@@ -1,7 +1,7 @@
 package com.like_lion.tomato.global.config;
 
-import com.like_lion.tomato.domain.auth.filter.JwtExceptionFilter;
-import com.like_lion.tomato.domain.auth.filter.JwtVerificationFilter;
+import com.like_lion.tomato.global.auth.filter.JwtExceptionFilter;
+import com.like_lion.tomato.global.auth.filter.JwtVerificationFilter;
 import com.like_lion.tomato.global.auth.handler.JwtAccessDeniedHandler;
 import com.like_lion.tomato.global.auth.handler.JwtLogoutSuccessHandler;
 import com.like_lion.tomato.global.auth.handler.OAuth2EntryPorint;

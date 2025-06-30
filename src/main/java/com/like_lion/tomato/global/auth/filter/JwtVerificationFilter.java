@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.auth.filter;
+package com.like_lion.tomato.global.auth.filter;
 
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
 import com.like_lion.tomato.global.auth.service.JwtService;
