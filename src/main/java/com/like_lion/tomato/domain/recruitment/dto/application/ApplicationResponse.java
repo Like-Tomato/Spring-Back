@@ -1,8 +1,8 @@
 package com.like_lion.tomato.domain.recruitment.dto.application;
 
-import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.domain.recruitment.dto.question.QuestionAnswerDto;
 import com.like_lion.tomato.domain.recruitment.entity.application.Application;
+import com.like_lion.tomato.global.common.enums.Part;
 
 import java.time.LocalDateTime;
 import java.util.List;

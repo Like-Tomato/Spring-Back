@@ -1,11 +1,11 @@
 package com.like_lion.tomato.domain.recruitment.entity.application;
 
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.domain.recruitment.entity.common.RecruitmentCommonAnswer;
 import com.like_lion.tomato.domain.recruitment.entity.constant.ApplicationStatus;
 import com.like_lion.tomato.domain.recruitment.entity.part.RecruitmentPartAnswer;
 import com.like_lion.tomato.global.common.BaseEntity;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;

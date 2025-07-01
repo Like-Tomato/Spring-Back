@@ -1,8 +1,8 @@
 package com.like_lion.tomato.domain.recruitment.dto.question;
 
-import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.domain.recruitment.entity.common.RecruitmentCommonQuestion;
 import com.like_lion.tomato.domain.recruitment.entity.part.RecruitmentPartQuestion;
+import com.like_lion.tomato.global.common.enums.Part;
 
 import java.util.List;
 
