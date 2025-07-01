@@ -146,4 +146,9 @@ public class Member {
                         this.role == Role.ROLE_MASTER
                 );
     }
+
+    public boolean hasAdminRoleOrHigher() {
+        return this.role != null &&
+                (this.role == Role.ROLE_ADMIN || this.role == Role.ROLE_MASTER);
+    }
 }
