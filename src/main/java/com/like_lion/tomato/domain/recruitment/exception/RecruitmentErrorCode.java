@@ -26,6 +26,7 @@ public enum RecruitmentErrorCode implements ErrorCode {
 
     // 충돌 오류
     APPLICATION_ALREADY_EXISTS(409, "이미 지원서가 존재합니다"),
+    APPLICATION_ALREADY_SUBMITTED(409, "이미 지원서가 제출되었습니다"),
     ALREADY_SUBSCRIBED(409, "이미 모집 알림을 신청하셨습니다");
 
     private final int status;
