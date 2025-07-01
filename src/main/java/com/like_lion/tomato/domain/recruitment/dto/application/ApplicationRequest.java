@@ -1,6 +1,6 @@
 package com.like_lion.tomato.domain.recruitment.dto.application;
 
-import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.global.common.enums.Part;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
