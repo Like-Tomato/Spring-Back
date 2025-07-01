@@ -1,7 +1,7 @@
 package com.like_lion.tomato.domain.recruitment.entity.part;
 
-import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.global.common.BaseEntity;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;

@@ -1,10 +1,10 @@
 package com.like_lion.tomato.domain.recruitment.service.application;
 
-import com.like_lion.tomato.domain.member.entity.Part;
 import com.like_lion.tomato.domain.recruitment.dto.question.QuestionResponse;
 import com.like_lion.tomato.domain.recruitment.dto.question.QuestionResponse.CommonQuestion;
 import com.like_lion.tomato.domain.recruitment.repository.common.RecruitmentCommonQuestionRepository;
 import com.like_lion.tomato.domain.recruitment.repository.part.RecruitmentPartQuestionRepository;
+import com.like_lion.tomato.global.common.enums.Part;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
