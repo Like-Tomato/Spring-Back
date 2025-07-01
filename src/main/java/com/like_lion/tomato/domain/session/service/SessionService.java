@@ -51,11 +51,13 @@ public class SessionService {
                 .orElseThrow(() -> new SessionException(SessionErrorCode.PART_NOT_FOUND));
 
         // 2. 해당 멤버의 과제 제출 내역 조회 (없을 수도 있음)
-        AssignmentSubmission submission = assignmentSubmissionRepository
-                .findByMemberIdAndSessionId(memberId, sessionId)
-                .orElse(null); // 예외 처리!
+//        AssignmentSubmission submission = assignmentSubmissionRepository
+//                .findByMemberIdAndSessionId(memberId, sessionId)
+//                .orElse(null); // 예외 처리!
+//
+//        // 3. DTO 변환 후 반환
+//        return SessionDetailRes.of(session, submission);
 
-        // 3. DTO 변환 후 반환
-        return SessionDetailRes.of(session, submission);
+        return SessionDetailRes.of(session);
     }
 }

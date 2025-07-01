@@ -79,9 +79,6 @@ public class Member {
     @Column
     private String studentId;
 
-    @Enumerated(EnumType.STRING)
-    private Part part;
-
     @Column
     private String portfolioUrl;
 

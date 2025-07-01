@@ -1,6 +1,6 @@
 package com.like_lion.tomato.domain.auth.entity;
 
-import com.like_lion.tomato.global.common.BaseEntitiy;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.Column;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RefreshToken extends BaseEntitiy {
+public class RefreshToken extends BaseEntity {
 
     @DomainId(DomainType.REFRESH_TOKEN)
     @Id
