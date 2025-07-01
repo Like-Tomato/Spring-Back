@@ -1,13 +1,11 @@
 package com.like_lion.tomato.domain.member.dto.response;
 
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.auth.model.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor

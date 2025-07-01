@@ -22,6 +22,7 @@ public class Assignment extends BaseEntitiy {
     @Column(name = "assignment_id")
     private String id;
 
+
     private String title;
 
     private String description;

@@ -1,7 +1,8 @@
-package com.like_lion.tomato.domain.session.entity.session;
+package com.like_lion.tomato.global.common.enums;
 
 public enum MimeType {
     PDF("application/pdf"),
+    JPG("image/jpeg"),
     JPEG("image/jpeg"),
     PNG("image/png");
 

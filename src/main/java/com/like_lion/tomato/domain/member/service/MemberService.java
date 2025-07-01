@@ -6,7 +6,7 @@ import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
 import com.like_lion.tomato.domain.member.implement.MemberReader;
@@ -17,8 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
