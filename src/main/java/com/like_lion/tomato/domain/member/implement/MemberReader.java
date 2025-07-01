@@ -1,7 +1,7 @@
 package com.like_lion.tomato.domain.member.implement;
 
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;

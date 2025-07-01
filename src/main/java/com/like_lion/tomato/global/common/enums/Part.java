@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.member.entity;
+package com.like_lion.tomato.global.common.enums;
 
 public enum Part {
     AI,
