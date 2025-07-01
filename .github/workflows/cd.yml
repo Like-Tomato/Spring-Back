@@ -3,7 +3,7 @@ name: CD - Production
 on:
   push:
     branches:
-      - 'main'
+      - '20-ci/cd'
 
 jobs:
   deploy:
