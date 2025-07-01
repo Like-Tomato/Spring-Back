@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RefreshTocken extends BaseEntitiy {
+public class RefreshToken extends BaseEntitiy {
 
-    @DomainId(DomainType.REFRESH_TOCKEN)
+    @DomainId(DomainType.REFRESH_TOKEN)
     @Id
-    @Column(name = "refresh_tocken_id")
+    @Column(name = "refresh_token_id")
     private String id;
 
     @Column(nullable = false)
@@ -28,12 +28,12 @@ public class RefreshTocken extends BaseEntitiy {
     private String username;
 
     @Builder
-    public RefreshTocken(String payload, String username) {
+    public RefreshToken(String payload, String username) {
         this.payload = payload;
         this.username = username;
     }
 
-    public RefreshTocken updatePayload(String newPayload) {
+    public RefreshToken updatePayload(String newPayload) {
         this.payload = newPayload;
         return this;
     }

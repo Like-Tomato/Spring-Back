@@ -11,10 +11,10 @@ public enum AuthErrorCode implements ErrorCode {
     INVALID_VERIFICATION(401, "검증 정보가 올바르지 않습니다"),
     AUTH_FAILED(401, "인증에 실패하였습니다"),
     INVALID_TOKEN(401, "유효하지 않은 토큰입니다"),
-    UNSUPPORTED_TOCKEN(401, "지원하지 않는 토큰입니다"),
+    UNSUPPORTED_TOKEN(401, "지원하지 않는 토큰입니다"),
     EXPIRED_TOKEN(401, "만료된 토큰입니다"),
-    INVALID_ACCESS_TOCKEN(401, "유효하지 않은 엑세스 토큰입니다."),
-    EXPIRED_ACCESS_TOCKEN(401, "만료된 엑세스 토큰입니다."),
+    INVALID_ACCESS_TOKEN(401, "유효하지 않은 엑세스 토큰입니다."),
+    EXPIRED_ACCESS_TOKEN(401, "만료된 엑세스 토큰입니다."),
     INVALID_REFRESH_TOKEN(401, "유효하지 않은 리프레시 토큰입니다"),
     EXPIRED_REFRESH_TOKEN(401, "만료된 리프레시 토큰입니다"),
     GOOGLE_AUTH_FAILED(401, "구글 인증에 실패했습니다"),
@@ -35,8 +35,8 @@ public enum AuthErrorCode implements ErrorCode {
 
     // 조회 및 기타
     GOOGLE_CLIENT_REGISTRATION_NOT_FOUND(404, "구글 ClientRegistration을 찾을 수 없습니다"),
-    ACCESS_TOCKEN_NOT_FOUND(404, "엑세스 토큰을 찾을 수 없습니다"),
-    REFRESH_TOCKEN_NOT_FOUND(404, "리프레시 토큰을 찾을 수 없습니다"),
+    ACCESS_TOKEN_NOT_FOUND(404, "엑세스 토큰을 찾을 수 없습니다"),
+    REFRESH_TOKEN_NOT_FOUND(404, "리프레시 토큰을 찾을 수 없습니다"),
     COOKIE_NOT_FOUND(404, "쿠키를 찾을 수 없습니다");
 
 
