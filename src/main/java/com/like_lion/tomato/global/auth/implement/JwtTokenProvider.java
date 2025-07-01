@@ -1,6 +1,6 @@
 package com.like_lion.tomato.global.auth.implement;
 
-import com.like_lion.tomato.global.auth.dto.TockenDto;
+import com.like_lion.tomato.global.auth.dto.TokenDto;
 import com.like_lion.tomato.global.auth.dto.UserInfo;
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
 import io.jsonwebtoken.Claims;
@@ -18,20 +18,20 @@ import java.util.Date;
 // JWT 토큰 발급 서비스
 
 @Component
-public class JwtTockenProvider {
+public class JwtTokenProvider {
 
     public static final String BEARER_PREFIX = "Bearer ";
 
-    @Value("${jwt.access-tocken-expiration}")
-    private Long accessTockenExpiration;
+    @Value("${jwt.access-token-expiration}")
+    private Long accessTokenExpiration;
 
-    @Value("${jwt.refresh-tocken-expiration}")
-    private Long refreshTockenExpiration;
+    @Value("${jwt.refresh-token-expiration}")
+    private Long refreshTokenExpiration;
 
     private SecretKey secretKey;
     private JwtParser jwtParser;
 
-    public JwtTockenProvider(@Value("${jwt.secret}")String secretKey) {
+    public JwtTokenProvider(@Value("${jwt.secret}")String secretKey) {
         this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
         this.jwtParser = Jwts.parser()
                 .verifyWith(this.secretKey)
@@ -39,18 +39,18 @@ public class JwtTockenProvider {
     }
 
     // 토큰 생성 메서드
-    public TockenDto createJwt(LikeLionOAuth2User likeLionOAuth2User) {
-        String accessTocken = generateAccessTocken(likeLionOAuth2User, new Date());
-        String refreshTocen = generateRefreshTocken(likeLionOAuth2User.getName(), new Date());
+    public TokenDto createJwt(LikeLionOAuth2User likeLionOAuth2User) {
+        String accessToken = generateAccessToken(likeLionOAuth2User, new Date());
+        String refreshToken = generateRefreshToken(likeLionOAuth2User.getName(), new Date());
 
-        return TockenDto.builder()
+        return TokenDto.builder()
                 .username(likeLionOAuth2User.getName())
-                .accessTocken(accessTocken)
-                .refreshTocken(refreshTocen)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
-    public String generateAccessTocken(LikeLionOAuth2User likeLionOAuth2User, Date now) {
+    public String generateAccessToken(LikeLionOAuth2User likeLionOAuth2User, Date now) {
         ArrayList<? extends GrantedAuthority> authorities =
                 (ArrayList<? extends GrantedAuthority>) likeLionOAuth2User.getAuthorities();
 
@@ -61,29 +61,29 @@ public class JwtTockenProvider {
                 .claim("role", likeLionOAuth2User.getRole())
                 .claim("profileImage", likeLionOAuth2User.getProfileImage())
                 .claim("provider", likeLionOAuth2User.getProvider())
-                .issuedAt(new Date(now.getTime() + accessTockenExpiration))
+                .issuedAt(new Date(now.getTime() + accessTokenExpiration))
                 .signWith(secretKey)
                 .compact();
     }
 
-    String generateRefreshTocken(String username, Date now) {
+    String generateRefreshToken(String username, Date now) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + refreshTockenExpiration))
+                .expiration(new Date(now.getTime() + refreshTokenExpiration))
                 .signWith(secretKey)
                 .compact();
     }
 
-    public Long getAccessTockenExpiration() {
-        return accessTockenExpiration;
+    public Long getAccessTokenExpiration() {
+        return accessTokenExpiration;
     }
 
-    public Long getRefreshTockenExpiration() {
-        return accessTockenExpiration;
+    public Long getRefreshTokenExpiration() {
+        return accessTokenExpiration;
     }
 
-    public UserInfo extractMemberDTOFromAccessTocken(String accessToken) {
+    public UserInfo extractMemberDTOFromAccessToken(String accessToken) {
         return UserInfo.builder()
                 .id(this.getId(accessToken))
                 .username(this.getUsername(accessToken))
@@ -101,33 +101,33 @@ public class JwtTockenProvider {
      *     }
      *     에서 반복되는 Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload()을 모듈화
      *
-     * @param tocken
+     * @param token
      * @return claims(payload)
      */
-    public Claims getPayload(String tocken) {
+    public Claims getPayload(String token) {
         return jwtParser
-                .parseSignedClaims(tocken)
+                .parseSignedClaims(token)
                 .getPayload();
     }
 
-    public String getId(String tocken) {
-        return getPayload(tocken).get("username", String.class);
+    public String getId(String token) {
+        return getPayload(token).get("username", String.class);
     }
 
-    public String getUsername(String tocken) {
-        return getPayload(tocken).get("username", String.class);
+    public String getUsername(String token) {
+        return getPayload(token).get("username", String.class);
     }
 
-    public String getProvider(String tocken) {
-        return jwtParser.parseSignedClaims(tocken).getPayload().get("provider", String.class);
+    public String getProvider(String token) {
+        return jwtParser.parseSignedClaims(token).getPayload().get("provider", String.class);
     }
 
-    public String getRole(String tocken) {
-        return getPayload(tocken).get("role", String.class);
+    public String getRole(String token) {
+        return getPayload(token).get("role", String.class);
     }
 
-    public String getProfileImage(String tocken) {
-        return getPayload(tocken).get("profileImage", String.class);
+    public String getProfileImage(String token) {
+        return getPayload(token).get("profileImage", String.class);
     }
 
     //필요시 다른 getter 추가 구현

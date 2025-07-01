@@ -23,16 +23,16 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String bearerTocken= request.getHeader("Authorization");
-        String accessTocken = jwtService.getTockenFromBearer(bearerTocken);
+        String bearerToken= request.getHeader("Authorization");
+        String accessToken = jwtService.getTokenFromBearer(bearerToken);
 
-        if(!StringUtils.hasText(accessTocken)) {
+        if(!StringUtils.hasText(accessToken)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwtService.validate(accessTocken);
-        setAuthenticationcontext(accessTocken);
+        jwtService.validate(accessToken);
+        setAuthenticationContext(accessToken);
         filterChain.doFilter(request, response);
     }
 
@@ -41,8 +41,8 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         return super.shouldNotFilter(request);
     }
 
-    private void setAuthenticationcontext(String tocken) {
-        LikeLionOAuth2User likeLionOAuth2User = jwtService.getPrincipal(tocken);
+    private void setAuthenticationContext(String token) {
+        LikeLionOAuth2User likeLionOAuth2User = jwtService.getPrincipal(token);
         OAuth2AuthenticationToken authenticationToken =
                 new OAuth2AuthenticationToken(
                         likeLionOAuth2User,

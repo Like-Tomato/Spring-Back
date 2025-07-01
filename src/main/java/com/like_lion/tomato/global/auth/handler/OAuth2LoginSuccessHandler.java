@@ -1,7 +1,7 @@
 package com.like_lion.tomato.global.auth.handler;
 
-import com.like_lion.tomato.global.auth.dto.TockenDto;
-import com.like_lion.tomato.global.auth.implement.JwtTockenProvider;
+import com.like_lion.tomato.global.auth.dto.TokenDto;
+import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
 import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.util.CookieUtil;
@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtService jwtService;
-    private final JwtTockenProvider jwtTockenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${client.url}")
     private String clientUrl;
@@ -32,17 +32,17 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         LikeLionOAuth2User principal = (LikeLionOAuth2User) authentication.getPrincipal();
-        TockenDto tockenDto = jwtService.doTockenGenerationProcess(principal);
+        TokenDto tokenDto = jwtService.doTokenGenerationProcess(principal);
 
-        HttpHeaderUtil.setAccessTocken(response, tockenDto.getAccessTocken());
+        HttpHeaderUtil.setAccessToken(response, tokenDto.getAccessToken());
         // 리프레시 토큰: 쿠키 설정 (만료 시간은 밀리초 → 초 변환)
-        int refreshMaxAge = (int) (jwtTockenProvider.getRefreshTockenExpiration() / 1000);
-        CookieUtil.setRefreshCookies(response, tockenDto.getRefreshTocken(), refreshMaxAge);
+        int refreshMaxAge = (int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000);
+        CookieUtil.setRefreshCookies(response, tokenDto.getRefreshToken(), refreshMaxAge);
 
-        response.sendRedirect(createUri(tockenDto, principal.getId()));
+        response.sendRedirect(createUri(tokenDto, principal.getId()));
     }
 
-    private String createUri(TockenDto tockenDto, String userId) {
+    private String createUri(TokenDto tokenDto, String userId) {
         return UriComponentsBuilder
                 .fromUriString(clientUrl)
                 .build()
