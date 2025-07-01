@@ -1,5 +1,7 @@
 package com.like_lion.tomato.global.auth.implement;
 
+import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
+import com.like_lion.tomato.domain.auth.exception.AuthException;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.global.auth.dto.TokenDto;
 import com.like_lion.tomato.global.auth.dto.UserInfo;
@@ -16,6 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 // JWT 토큰 발급 서비스
 
@@ -91,6 +94,13 @@ public class JwtTokenProvider {
                 .profileUrl(this.getProfileImage(accessToken))
                 .role(this.getRole(accessToken))
                 .build();
+    }
+
+    public String extractMemberIdFromToken(String authorization) {
+        return Optional.ofNullable(authorization)
+                .filter(auth -> auth.startsWith("Bearer "))
+                .map(auth -> auth.substring(7))
+                .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_ACCESS_TOKEN));
     }
 
     /**
