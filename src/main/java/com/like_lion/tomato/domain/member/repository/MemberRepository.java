@@ -1,7 +1,7 @@
 package com.like_lion.tomato.domain.member.repository;
 
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.global.common.enums.Part;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

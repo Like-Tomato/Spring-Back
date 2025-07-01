@@ -45,6 +45,13 @@ public class JwtService {
         refreshtockenRepository.deleteAllByUsername(username);
     }
 
+    public String extractMemberIdFromAccessToken(String accessToken) {
+        // 내부적으로 getPrincipal을 활용하거나, 바로 JwtTockenProvider에서 id 추출
+        return getPrincipal(accessToken).getId();
+        // 또는
+        // return jwtTockenProvider.getId(accessToken);
+    }
+
     private String extractUsernameFromRefreshTocken(String bearerRefreshTocken) {
         String refreshTocken = this.getTockenFromBearer(bearerRefreshTocken);
         return jwtTockenProvider.getUsername(refreshTocken);
