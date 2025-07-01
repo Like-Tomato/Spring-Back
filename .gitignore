@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 설정 및 보안(oauth2, jwt) 관련 yml
+src/main/resources/application.yml
+src/main/resources/application-oauth2.yml
+src/main/resources/application-jwt.yml

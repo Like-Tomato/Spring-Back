@@ -1,6 +1,6 @@
 package com.like_lion.tomato.global.exception;
 
-import com.like_lion.tomato.global.response.ApiResponse;
+import com.like_lion.tomato.global.exception.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

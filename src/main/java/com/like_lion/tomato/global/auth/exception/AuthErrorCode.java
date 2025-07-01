@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.member.exception;
+package com.like_lion.tomato.global.auth.exception;
 
 import com.like_lion.tomato.global.exception.ErrorCode;
 import lombok.Getter;
@@ -6,11 +6,21 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum MemberErrorCode implements ErrorCode {
-    // 인증 관련
+public enum AuthErrorCode implements ErrorCode {
+    // 인증(Auth) 관련
     AUTH_FAILED(401, "인증이 필요합니다."),
+    INVALID_TOKEN(401, "유효하지 않은 토큰입니다."),
+    EXPIRED_TOKEN(401, "만료된 토큰입니다."),
+    INVALID_REFRESH_TOKEN(401, "유효하지 않은 리프레시 토큰입니다."),
+    EXPIRED_REFRESH_TOKEN(401, "만료된 리프레시 토큰입니다."),
+    REFRESH_TOKEN_REVOKED(403, "폐기된 리프레시 토큰입니다."),
+    INVALID_AUTH_CODE(400, "유효하지 않은 인증 코드입니다."),
+    INVALID_REDIRECT_URI(400, "유효하지 않은 리다이렉트 URI입니다."),
+    GOOGLE_AUTH_FAILED(401, "구글 인증에 실패했습니다."),
     // 권한 관련
+    ADMIN_REQUIRED(403, "관리자 권한이 필요합니다."),
     MEMBER_REQUIRED(403, "멤버 권한이 필요합니다."),
+    ACCESS_DENIED(403, "접근이 거부되었습니다."),
     MEMBER_PROFILE_PRIVATE(403, "비공개 프로필입니다."),
     // 충돌 및 중복
     MEMBER_PROFILE_ALREADY_EXISTS(409, "이미 멤버 소개가 존재합니다."),
@@ -28,10 +38,10 @@ public enum MemberErrorCode implements ErrorCode {
     INVALID_STUDENT_ID_FORMAT(400, "올바른 학번 형식이 아닙니다."),
     INVALID_EMAIL_FORMAT(400, "올바른 이메일 형식이 아닙니다."),
     // 조회 및 기타
+    PROVIDER_NOT_FOUND(404, "일치하는 제공자를 찾을 수 없습니다."),
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     MEMBER_NOT_FOUND(404, "멤버를 찾을 수 없습니다."),
     APPLICATION_NOT_FOUND(404, "지원서를 찾을 수 없습니다.");
-
 
     private final int status;
     private final String message;
