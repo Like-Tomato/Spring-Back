@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - '20-ci/cd'
+      - 'dev'
 
 jobs:
   build:

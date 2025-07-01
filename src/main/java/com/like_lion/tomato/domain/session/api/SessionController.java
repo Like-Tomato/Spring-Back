@@ -3,7 +3,7 @@ package com.like_lion.tomato.domain.session.api;
 import com.like_lion.tomato.domain.session.dto.SessionListRes;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
 import com.like_lion.tomato.domain.session.service.SessionService;
-import com.like_lion.tomato.global.auth.implement.JwtTockenProvider;
+import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.global.util.HttpHeaderUtil;
@@ -32,7 +32,7 @@ public class SessionController {
             HttpServletRequest request // HttpServletRequest로 헤더 접근
     ) {
         // 1. 헤더에서 Bearer 토큰 추출
-        String accessToken = HttpHeaderUtil.getAccessTocken(request, JwtTockenProvider.BEARER_PREFIX);
+        String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
 
         // 2. JwtService로부터 멤버 정보 추출
         String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
