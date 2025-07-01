@@ -3,6 +3,7 @@ package com.like_lion.tomato.global.auth.service;
 import com.like_lion.tomato.domain.auth.entity.RefreshToken;
 import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
 import com.like_lion.tomato.domain.auth.exception.AuthException;
+import com.like_lion.tomato.domain.auth.repository.RefreshTokenRepository;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.member.implement.MemberReader;
 import com.like_lion.tomato.global.auth.dto.TokenDto;
@@ -11,7 +12,6 @@ import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.implement.RefreshTokenReader;
 import com.like_lion.tomato.global.auth.implement.RefreshTokenWriter;
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
-import com.like_lion.tomato.domain.auth.repository.RefreshTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -30,7 +30,7 @@ public class JwtService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberReader memberReader;
-    private final RefreshTokenRepository refreshtokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final RefreshTokenReader refreshTokenReader;
     private final RefreshTokenWriter refreshTokenWriter;
 
@@ -42,20 +42,17 @@ public class JwtService {
     public void logout(String bearerRefreshToken) {
         String username = this.extractUsernameFromRefreshToken(bearerRefreshToken);
         log.debug("로그아웃 === 유저명: {}",  username);
-        refreshtokenRepository.deleteAllByUsername(username);
+        refreshTokenRepository.deleteAllByUsername(username);
     }
 
     public String extractMemberIdFromAccessToken(String accessToken) {
-        // 내부적으로 getPrincipal을 활용하거나, 바로 JwtTockenProvider에서 id 추출
         return getPrincipal(accessToken).getId();
-        // 또는
-        // return jwtTockenProvider.getId(accessToken);
     }
 
-    private String extractUsernameFromRefreshTocken(String bearerRefreshTocken) {
-        String refreshTocken = this.getTockenFromBearer(bearerRefreshTocken);
-        return jwtTockenProvider.getUsername(refreshTocken);
-
+    private String extractUsernameFromRefreshToken(String bearerRefreshToken) {
+        String refreshToken = this.getTokenFromBearer(bearerRefreshToken);
+        return jwtTokenProvider.getUsername(refreshToken);
+    }
 
     public void validate(String token) {
         try {
@@ -74,7 +71,7 @@ public class JwtService {
     @Transactional
     public TokenDto tokenRefresh(String bearerRefreshToken) {
         String refreshToken = this.getTokenFromBearer(bearerRefreshToken);
-        this.validate(refreshToken);;
+        this.validate(refreshToken);
         LikeLionOAuth2User likeLionOAuth2User = this.extractLikeLionOAuth2User(refreshToken);
         log.debug("토큰 갱신 === 유저: {}", likeLionOAuth2User);
         return this.doTokenGenerationProcess(likeLionOAuth2User);
