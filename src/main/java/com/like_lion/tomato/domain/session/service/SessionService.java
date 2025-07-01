@@ -1,14 +1,21 @@
 package com.like_lion.tomato.domain.session.service;
 
+import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
+import com.like_lion.tomato.domain.member.exception.MemberException;
+import com.like_lion.tomato.domain.member.implement.MemberReader;
 import com.like_lion.tomato.domain.session.dto.SessionListRes;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
 import com.like_lion.tomato.domain.session.dto.response.SessionSimpleRes;
 import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.domain.session.entity.session.Session;
-import com.like_lion.tomato.domain.session.entity.session.Session.Part;
+import com.like_lion.tomato.domain.session.repository.AssignmentSubmissionRepository;
+import com.like_lion.tomato.domain.session.repository.SessionFileRepository;
 import com.like_lion.tomato.domain.session.repository.SessionRepository;
 import com.like_lion.tomato.domain.session.exception.SessionErrorCode;
 import com.like_lion.tomato.domain.session.exception.SessionException;
+import com.like_lion.tomato.global.common.enums.Part;
+import com.like_lion.tomato.infra.s3.dto.FileRegisterReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +27,16 @@ import java.util.List;
 public class SessionService {
 
     private final SessionRepository sessionRepository;
+    private final SessionFileRepository sessionFileRepository;
+    private final AssignmentSubmissionRepository assignmentSubmissionRepository;
+    private final MemberReader memberReader;
 
     @Transactional(readOnly = true)
     public SessionListRes readAllSessions(String part) {
-        Part partEnum = null;
-        if (part != null && !part.isBlank()) {
-            if (!Part.isValid(part)) {
-                throw new SessionException(SessionErrorCode.INVALID_PART);
-            }
-            partEnum = Part.valueOf(part.toUpperCase());
-        }
+
+        if(!part.isBlank() && !Part.isValid(part)) throw new SessionException(SessionErrorCode.INVALID_PART);
+        Part partEnum = Part.valueOf(part.toUpperCase());
+
         List<Session> sessionEntities = sessionRepository.findAllByPartOrAll(partEnum);
 
         List<SessionSimpleRes> simpleResList = sessionEntities.stream()
@@ -46,16 +53,34 @@ public class SessionService {
      */
     @Transactional(readOnly = true)
     public SessionDetailRes getSessionWithAssignment(String sessionId, String memberId) {
-        // 1. 세션 조회 (없으면 404)
         Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new SessionException(SessionErrorCode.PART_NOT_FOUND));
+                .orElseThrow(() -> new SessionException(SessionErrorCode.SESSION_NOT_FOUND));
 
         // 2. 해당 멤버의 과제 제출 내역 조회 (없을 수도 있음)
         AssignmentSubmission submission = assignmentSubmissionRepository
                 .findByMemberIdAndSessionId(memberId, sessionId)
-                .orElse(null); // 예외 처리!
+                .orElse(null);
 
         // 3. DTO 변환 후 반환
         return SessionDetailRes.of(session, submission);
+    }
+    /**
+     * 세션 파일 등록 (ADMIN만 가능)
+     * @param sessionId 세션 ID
+     * @param memberId  등록자(관리자) 멤버 ID
+     * @param req       파일 등록 요청 DTO(fileKey, originalName, mimeType, size)
+     */
+    @Transactional
+    public void registerFile(String sessionId, String memberId, FileRegisterReq req) {
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new SessionException(SessionErrorCode.SESSION_NOT_FOUND));
+
+        Member member = memberReader.findOptionById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        // 3. SessionFile 엔티티 생성 및 저장
+
+        sessionFileRepository.save(req.toSessionFIle(session, member));
     }
 }

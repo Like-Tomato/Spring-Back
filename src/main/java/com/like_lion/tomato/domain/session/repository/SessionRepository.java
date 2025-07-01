@@ -2,7 +2,7 @@ package com.like_lion.tomato.domain.session.repository;
 
 import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.domain.session.entity.session.Session;
-import com.like_lion.tomato.domain.session.entity.session.Session.Part;
+import com.like_lion.tomato.global.common.enums.Part;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

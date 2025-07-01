@@ -3,6 +3,8 @@ package com.like_lion.tomato.infra.s3;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.like_lion.tomato.infra.s3.dto.PresignedUrlReq;
+import com.like_lion.tomato.infra.s3.dto.PresignedUrlRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

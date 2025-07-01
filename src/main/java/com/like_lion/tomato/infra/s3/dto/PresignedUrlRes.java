@@ -1,5 +1,5 @@
 // PresignedUrlRes.java
-package com.like_lion.tomato.infra.s3;
+package com.like_lion.tomato.infra.s3.dto;
 
 import com.like_lion.tomato.global.common.enums.MimeType;
 

@@ -15,7 +15,6 @@ public class SessionDetailRes {
     private LocalDateTime createdAt;
     private LocalDateTime endedAt;
     private String sessionUrl;
-    private final AssignmentSubmissionRes assignment; // null 가능
 
     public SessionDetailRes(String id, int year, String part, String title,
                             LocalDateTime createdAt, LocalDateTime endedAt,
@@ -37,7 +36,6 @@ public class SessionDetailRes {
                 session.getGeneration().getYear(),
                 session.getPart().name(),
                 session.getTitle(),
-                session.getStartedAt(),
                 session.getEndedAt(),
                 session.getSessionUrl(), // 없으면 null
                 submission != null ? AssignmentSubmissionRes.from(submission) : null

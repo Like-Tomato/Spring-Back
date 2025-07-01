@@ -1,6 +1,8 @@
 package com.like_lion.tomato.infra.s3;
 
 import com.like_lion.tomato.global.exception.response.ApiResponse;
+import com.like_lion.tomato.infra.s3.dto.PresignedUrlReq;
+import com.like_lion.tomato.infra.s3.dto.PresignedUrlRes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
