@@ -1,11 +1,13 @@
 package com.like_lion.tomato.global.auth.implement;
 
+import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.global.auth.dto.TokenDto;
 import com.like_lion.tomato.global.auth.dto.UserInfo;
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -17,6 +19,7 @@ import java.util.Date;
 
 // JWT 토큰 발급 서비스
 
+@Getter
 @Component
 public class JwtTokenProvider {
 
@@ -28,8 +31,8 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-token-expiration}")
     private Long refreshTokenExpiration;
 
-    private SecretKey secretKey;
-    private JwtParser jwtParser;
+    private final SecretKey secretKey;
+    private final JwtParser jwtParser;
 
     public JwtTokenProvider(@Value("${jwt.secret}")String secretKey) {
         this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
@@ -66,6 +69,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String generateAccessTokenForMember(Member member) {
+        LikeLionOAuth2User oAuth2User = LikeLionOAuth2User.from(UserInfo.from(member));
+        return generateAccessToken(oAuth2User, new Date());
+    }
+
     String generateRefreshToken(String username, Date now) {
         return Jwts.builder()
                 .subject(username)
@@ -73,14 +81,6 @@ public class JwtTokenProvider {
                 .expiration(new Date(now.getTime() + refreshTokenExpiration))
                 .signWith(secretKey)
                 .compact();
-    }
-
-    public Long getAccessTokenExpiration() {
-        return accessTokenExpiration;
-    }
-
-    public Long getRefreshTokenExpiration() {
-        return accessTokenExpiration;
     }
 
     public UserInfo extractMemberDTOFromAccessToken(String accessToken) {
@@ -131,5 +131,4 @@ public class JwtTokenProvider {
     }
 
     //필요시 다른 getter 추가 구현
-
 }
