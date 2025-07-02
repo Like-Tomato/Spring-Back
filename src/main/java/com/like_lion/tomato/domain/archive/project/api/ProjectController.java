@@ -22,4 +22,13 @@ public class ProjectController {
         ProjectDto.Response response = projectService.uploadProject(request, authorization);
         return ApiResponse.success(response);
     }
+
+    @DeleteMapping("/{projectId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ApiResponse.MessageData> deleteProject(
+            @PathVariable String projectId
+    ) {
+        ApiResponse.MessageData message = projectService.deleteProject(projectId);
+        return ApiResponse.success(message);
+    }
 }
