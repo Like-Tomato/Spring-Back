@@ -6,12 +6,14 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.like_lion.tomato.infra.s3.dto.request.PresignedUrlReq;
 import com.like_lion.tomato.infra.s3.dto.response.PresignedUrlRes;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,6 +21,7 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3PresignedService {
 
     @Value("${cloud.s3.bucket}")
@@ -107,5 +110,20 @@ public class S3PresignedService {
         String fileUniqueId = UUID.randomUUID().toString();
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         return String.format("%s/%s_%s_%s", prefix, timestamp, fileUniqueId, fileName);
+    }
+
+    public void deleteFile(String fileKey) {
+        try {
+            amazonS3.deleteObject(bucket, fileKey);
+            log.info("S3 파일 삭제 완료: {}", fileKey);
+        } catch (Exception e) {
+            log.error("S3 파일 삭제 실패: {}", fileKey, e);
+        }
+    }
+
+    public void deleteFiles(List<String> fileKeys) {
+        for (String fileKey : fileKeys) {
+            deleteFile(fileKey);
+        }
     }
 }
