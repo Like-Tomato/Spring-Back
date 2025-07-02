@@ -1,4 +1,0 @@
-jwt:
-  secret: 84AD9F449494E1BFCE814E4826A78
-  access-token-expiration: 3600000
-  refresh-token-expiration: 604800000  # 7일(밀리초, 7 * 24 * 60 * 60 * 1000 = 604800000)

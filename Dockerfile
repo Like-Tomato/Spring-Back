@@ -2,11 +2,8 @@ FROM gradle:8.5-jdk17 AS builder
 
 WORKDIR /app
 
-COPY build.gradle* settings.gradle* ./
+COPY build.gradle settings.gradle ./
 COPY gradle gradle
-
-RUN gradle dependencies --no-daemon || true
-
 COPY src src
 
 RUN gradle clean bootJar --no-daemon
@@ -24,7 +21,6 @@ RUN apt-get update && apt-get install -y tzdata curl && \
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
 COPY --from=builder /app/build/libs/*.jar app.jar
-
 RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 
 USER appuser
