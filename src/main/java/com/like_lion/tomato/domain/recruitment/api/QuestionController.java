@@ -8,6 +8,7 @@ import com.like_lion.tomato.domain.recruitment.service.application.QuestionServi
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,12 +18,12 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<QuestionResponse> uploadQuestions(
             @RequestParam Part part,
-            @RequestBody QuestionUploadRequest request,
-            @RequestHeader("Authorization") String authorization
+            @RequestBody QuestionUploadRequest request
     ) {
-        QuestionResponse response = questionService.uploadQuestions(part, request, authorization);
+        QuestionResponse response = questionService.uploadQuestions(part, request);
         return ApiResponse.success(response);
     }
 
@@ -33,12 +34,12 @@ public class QuestionController {
     }
 
     @PatchMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<QuestionResponse> updateQuestions(
             @RequestParam Part part,
-            @RequestBody QuestionUpdateRequest request,
-            @RequestHeader("Authorization") String authorization
+            @RequestBody QuestionUpdateRequest request
     ) {
-        QuestionResponse response = questionService.updateQuestions(part, request, authorization);
+        QuestionResponse response = questionService.updateQuestions(part, request);
         return ApiResponse.success(response);
     }
 
