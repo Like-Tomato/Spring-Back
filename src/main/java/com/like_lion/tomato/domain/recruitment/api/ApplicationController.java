@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ApplicationController {
     private final ApplicationService applicationService;
-    private final ApplicantService applicantService;
 
     @PostMapping("/application")
     public ApiResponse<ApplicationResponse> submitApplication(
@@ -41,25 +40,6 @@ public class ApplicationController {
             @RequestHeader("Authorization") String authorization
     ) {
         ApplicationResponse response = applicationService.draftApplication(request, authorization);
-        return ApiResponse.success(response);
-    }
-
-    @GetMapping("/applicants/{applicationId}")
-    public ApiResponse<ApplicantResponse.Detail> getApplicantDetail(
-            @PathVariable String applicationId,
-            @RequestHeader("Authorization") String authorization
-    ) {
-        ApplicantResponse.Detail response = applicantService.getApplicantDetail(applicationId, authorization);
-        return ApiResponse.success(response);
-    }
-
-    @GetMapping("/applicants")
-    public ApiResponse<StatusResponse> getApplicants(
-            @RequestParam Part part,
-            @RequestParam @NotNull Integer round,
-            @RequestHeader("Authorization") String authorization
-    ) {
-        StatusResponse response = applicantService.getApplicants(part, round, authorization);
         return ApiResponse.success(response);
     }
 }
