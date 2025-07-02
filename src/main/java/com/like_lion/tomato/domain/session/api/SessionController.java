@@ -29,6 +29,7 @@ public class SessionController {
             summary = "세션 전체/파트별 목록 + 제출여부 조회",
             description = """
                     세션 자료(주차별 강의/과제) 목록을 파트, 주차별로 필터링해서 조회합니다.
+                    기본 주차별 오름차순 입니다.
                     각 세션별로 현재 로그인한 멤버의 과제 제출여부(submitted)까지 함께 반환합니다.
                     
                     - part: BACKEND, FRONTEND, DESIGN, PM, AI 등 (optional)
