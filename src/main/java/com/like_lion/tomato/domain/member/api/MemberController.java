@@ -84,7 +84,7 @@ public class MemberController {
             description = "ADMIN 권한으로 멤버의 파트(직군)를 수정합니다.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PatchMapping("/{memberId}/part")
+    @PatchMapping("/{memberId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ApiResponse.MessageData> updatePart(
             @PathVariable String memberId,
