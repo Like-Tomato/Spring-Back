@@ -1,6 +1,8 @@
 package com.like_lion.tomato.domain.member.service;
 
 
+import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
+import com.like_lion.tomato.domain.auth.exception.AuthException;
 import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
@@ -91,5 +93,21 @@ public class MemberService {
         String memberId = jwtTokenProvider.extractMemberIdFromToken(token);
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public void validateAdminPermission(String authorization) {
+        Member member = extractMemberFromToken(authorization);
+        if (!member.hasAdminRoleOrHigher()) {
+            throw new AuthException(AuthErrorCode.ADMIN_REQUIRED);
+        }
+    }
+
+    public Member getValidateAdmin(String authorization) {
+        Member member = extractMemberFromToken(authorization);
+        if (!member.hasAdminRoleOrHigher()) {
+            throw new AuthException(AuthErrorCode.ADMIN_REQUIRED);
+        }
+
+        return member;
     }
 }
