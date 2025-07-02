@@ -23,8 +23,8 @@ public class JwtLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String refreshTocken = CookieUtil.getRefreshTocken(request);
-        jwtService.logout(refreshTocken);
+        String refreshToken = CookieUtil.getRefreshToken(request);
+        jwtService.logout(refreshToken);
         CookieUtil.deleteRefreshCookie(response);
 
         response.setStatus(HttpServletResponse.SC_OK);

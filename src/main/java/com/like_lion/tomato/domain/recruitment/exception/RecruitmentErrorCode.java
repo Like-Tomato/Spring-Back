@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RecruitmentErrorCode implements ErrorCode {
     // 잘못된 요청 오류
+    INVALID_ROUND(400, "올바른 라운드 범위가 아닙니다 (1 또는 2)"),
     INVALID_NAME_FORMAT(400, "올바른 이름 형식이 아닙니다"),
     INVALID_PHONE_FORMAT(400, "올바른 전화번호 형식이 아닙니다"),
     INVALID_STUDENT_ID_FORMAT(400, "올바른 학번 형식이 아닙니다"),
@@ -23,9 +24,11 @@ public enum RecruitmentErrorCode implements ErrorCode {
 
     // 리소스 없음 오류
     APPLICATION_NOT_FOUND(404, "지원서를 찾을 수 없습니다"),
+    QUESTION_NOT_FOUND(404, "질문을 찾을 수 없습니다"),
 
     // 충돌 오류
     APPLICATION_ALREADY_EXISTS(409, "이미 지원서가 존재합니다"),
+    APPLICATION_ALREADY_SUBMITTED(409, "이미 지원서가 제출되었습니다"),
     ALREADY_SUBSCRIBED(409, "이미 모집 알림을 신청하셨습니다");
 
     private final int status;

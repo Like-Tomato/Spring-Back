@@ -6,10 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 
-import static com.like_lion.tomato.global.auth.implement.JwtTockenProvider.BEARER_PREFIX;import static com.like_lion.tomato.global.auth.implement.JwtTockenProvider.BEARER_PREFIX;
+import static com.like_lion.tomato.global.auth.implement.JwtTokenProvider.BEARER_PREFIX;
 
 public class HttpHeaderUtil {
-
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -23,7 +22,7 @@ public class HttpHeaderUtil {
      * @param response    응답 헤더 객체
      * @param accessToken  액세스 토큰 값
      */
-    public static void setAccessTocken(HttpServletResponse response, String accessToken) {
+    public static void setAccessToken(HttpServletResponse response, String accessToken) {
         response.setHeader(AUTHORIZATION_HEADER, BEARER_PREFIX + accessToken);
     }
 
@@ -33,10 +32,10 @@ public class HttpHeaderUtil {
      * @param request 요청 객체
      * @return 액세스 토큰 값 (존재하지 않으면 AuthException(INVALID_TOKEN) 발생)
      */
-    public static String getAccessTocken(HttpServletRequest request, String bearerPrefix) {
+    public static String getAccessToken(HttpServletRequest request, String bearerPrefix) {
         String header = request.getHeader(AUTHORIZATION_HEADER);
-        if(header == null || !header.startsWith(bearerPrefix)) {
-            throw new AuthException(AuthErrorCode.ACCESS_TOCKEN_NOT_FOUND);
+        if (header == null || !header.startsWith(bearerPrefix)) {
+            throw new AuthException(AuthErrorCode.ACCESS_TOKEN_NOT_FOUND);
         }
         return header.substring(bearerPrefix.length());
     }
@@ -46,7 +45,7 @@ public class HttpHeaderUtil {
      *
      * @param headers 응답 헤더 객체
      */
-    public static void deleteAccessTocken(HttpHeaders headers) {
+    public static void deleteAccessToken(HttpHeaders headers) {
         headers.remove(AUTHORIZATION_HEADER);
     }
 }

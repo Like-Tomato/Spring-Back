@@ -16,6 +16,7 @@ public enum SessionErrorCode implements ErrorCode {
     SESSION_NOT_ACCESSIBLE(403, "해당 세션에 접근할 수 없습니다"),
 
     // 리소스 없음 오류
+    SESSION_NOT_FOUND(404, "세션을 찾을 수 없습니다"),
     PART_NOT_FOUND(404, "해당 파트를 찾을 수 없습니다");
 
     private final int status;

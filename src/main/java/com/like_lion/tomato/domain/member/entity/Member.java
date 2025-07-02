@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.member.entity;
 
 import com.like_lion.tomato.global.auth.model.Role;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
@@ -9,8 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Array;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -146,5 +145,10 @@ public class Member {
                         this.role == Role.ROLE_ADMIN ||
                         this.role == Role.ROLE_MASTER
                 );
+    }
+
+    public boolean hasAdminRoleOrHigher() {
+        return this.role != null &&
+                (this.role == Role.ROLE_ADMIN || this.role == Role.ROLE_MASTER);
     }
 }

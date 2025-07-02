@@ -24,14 +24,14 @@ public class CookieUtil {
      * (서블릿 기반 컨트롤러에서 사용)
      *
      * @param response 응답 객체
-     * @param refreshTocken
+     * @param refreshToken
      * @param maxAge 쿠키 만료 시간(초)
      */
     public static void setRefreshCookies(HttpServletResponse response,
-                                         String refreshTocken,
+                                         String refreshToken,
                                          int maxAge
     ) {
-        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshTocken);
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         //cookie.setSecure(true); https일 경우 사용
@@ -47,7 +47,7 @@ public class CookieUtil {
      * @param request 요청 객체
      * @return 리프레시 토큰 값 (존재하지 않으면 AuthException(COOKIE_NOT_FOUND) 발생)
      */
-    public static String getRefreshTocken(HttpServletRequest request) {
+    public static String getRefreshToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         return Arrays.stream(cookies)

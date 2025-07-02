@@ -1,5 +1,5 @@
 package com.like_lion.tomato.domain.session.entity.quiz;
-import com.like_lion.tomato.global.common.BaseEntitiy;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class QuizQuestion extends BaseEntitiy {
+public class QuizQuestion extends BaseEntity {
 
     @DomainId(DomainType.QUIZ_QUESTION)
     @Id

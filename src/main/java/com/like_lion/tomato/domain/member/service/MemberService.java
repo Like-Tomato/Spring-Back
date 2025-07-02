@@ -1,12 +1,16 @@
 package com.like_lion.tomato.domain.member.service;
 
 
+import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
+import com.like_lion.tomato.domain.auth.exception.AuthException;
 import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.entity.Part;
+import com.like_lion.tomato.domain.member.repository.MemberRepository;
+import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
 import com.like_lion.tomato.domain.member.implement.MemberReader;
@@ -18,14 +22,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Service
 public class MemberService {
 
     private final MemberReader memberReader;
     private final MemberWriter memberWriter;
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     // private final FileUploadService fileUploadService; 의존성 추가 후 구현!
 
 
@@ -83,5 +87,27 @@ public class MemberService {
         //member.update();
         memberWriter.save(member);
         return MemberProfileRes.from(member);
+    }
+
+    public Member extractMemberFromToken(String token) {
+        String memberId = jwtTokenProvider.extractMemberIdFromToken(token);
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    public void validateAdminPermission(String authorization) {
+        Member member = extractMemberFromToken(authorization);
+        if (!member.hasAdminRoleOrHigher()) {
+            throw new AuthException(AuthErrorCode.ADMIN_REQUIRED);
+        }
+    }
+
+    public Member getValidateAdmin(String authorization) {
+        Member member = extractMemberFromToken(authorization);
+        if (!member.hasAdminRoleOrHigher()) {
+            throw new AuthException(AuthErrorCode.ADMIN_REQUIRED);
+        }
+
+        return member;
     }
 }
