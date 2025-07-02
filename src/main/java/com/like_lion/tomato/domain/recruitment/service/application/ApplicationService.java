@@ -3,9 +3,7 @@ package com.like_lion.tomato.domain.recruitment.service.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
-import com.like_lion.tomato.domain.member.exception.MemberException;
-import com.like_lion.tomato.domain.member.repository.MemberRepository;
+import com.like_lion.tomato.domain.member.service.MemberService;
 import com.like_lion.tomato.domain.recruitment.dto.application.ApplicationRequest;
 import com.like_lion.tomato.domain.recruitment.dto.application.ApplicationRequest.QuestionAnswer;
 import com.like_lion.tomato.domain.recruitment.dto.application.ApplicationResponse;
@@ -27,22 +25,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class ApplicationService {
-    private final MemberRepository memberRepository;
     private final ApplicationRepository applicationRepository;
-    private final JwtTokenProvider tokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
 
     public ApplicationResponse submitApplication(@Valid ApplicationRequest request, String authorization) {
-        
-        String memberId = tokenProvider.extractMemberIdFromToken(authorization);
-
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberService.extractMemberFromToken(authorization);
 
         if (applicationRepository.existsByMemberIdAndSubmittedAtIsNotNull(member.getId())) {
             throw new RecruitmentException(RecruitmentErrorCode.APPLICATION_ALREADY_EXISTS);
         }
 
-        applicationRepository.deleteByMemberIdAndSubmittedAtIsNull(memberId);
+        applicationRepository.deleteByMemberIdAndSubmittedAtIsNull(member.getId());
 
         member.updateApplicationInfo(
                 request.name(),
@@ -75,40 +69,34 @@ public class ApplicationService {
 
         Application savedApplication = applicationRepository.save(application);
 
-        String accessToken = tokenProvider.generateAccessTokenForMember(member);
+        String accessToken = jwtTokenProvider.generateAccessTokenForMember(member);
 
         return ApplicationResponse.from(savedApplication, accessToken);
     }
 
     public ApplicationResponse getApplicationDetail(String authorization) {
-        String memberId = tokenProvider.extractMemberIdFromToken(authorization);
+        Member member = memberService.extractMemberFromToken(authorization);
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-        if (!applicationRepository.existsByMemberId(memberId)) {
+        if (!applicationRepository.existsByMemberId(member.getId())) {
             throw new RecruitmentException(RecruitmentErrorCode.APPLICATION_NOT_FOUND);
         }
 
         Application application = applicationRepository.findByMemberId(member.getId())
                 .orElseThrow(() -> new RecruitmentException(RecruitmentErrorCode.APPLICATION_NOT_FOUND));
 
-        String accessToken = tokenProvider.generateAccessTokenForMember(member);
+        String accessToken = jwtTokenProvider.generateAccessTokenForMember(member);
 
         return ApplicationResponse.from(application, accessToken);
     }
 
     public ApplicationResponse draftApplication(ApplicationRequest request, String authorization) {
-        String memberId = tokenProvider.extractMemberIdFromToken(authorization);
+        Member member = memberService.extractMemberFromToken(authorization);
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-        if (applicationRepository.existsByMemberIdAndSubmittedAtIsNotNull(memberId)) {
+        if (applicationRepository.existsByMemberIdAndSubmittedAtIsNotNull(member.getId())) {
             throw new RecruitmentException(RecruitmentErrorCode.APPLICATION_ALREADY_SUBMITTED);
         }
 
-        Optional<Application> existingDraft = applicationRepository.findByMemberIdAndSubmittedAtIsNull(memberId);
+        Optional<Application> existingDraft = applicationRepository.findByMemberIdAndSubmittedAtIsNull(member.getId());
 
         List<QuestionAnswer> commonAnswers = parseQuestionAnswersWithBlanks(request.commonQuestions());
         List<RecruitmentCommonAnswer> commonAnswerEntities = createCommonAnswersWithBlanks(commonAnswers);
@@ -118,7 +106,12 @@ public class ApplicationService {
 
         Application application;
         if (existingDraft.isPresent()) {
-            application = updateExistingDraft(existingDraft.get(), request, commonAnswerEntities, partAnswerEntities);
+            application = updateExistingDraft(
+                    existingDraft.get(),
+                    request,
+                    commonAnswerEntities,
+                    partAnswerEntities
+            );
         } else {
             application = Application.builder()
                     .username(request.name())
@@ -136,7 +129,7 @@ public class ApplicationService {
         }
 
         Application savedApplication = applicationRepository.save(application);
-        String accessToken = tokenProvider.generateAccessTokenForMember(member);
+        String accessToken = jwtTokenProvider.generateAccessTokenForMember(member);
 
         return ApplicationResponse.from(savedApplication, accessToken);
     }
@@ -164,7 +157,8 @@ public class ApplicationService {
                             List.class, QuestionAnswer.class));
 
             return answers.stream()
-                    .filter(qa -> qa.questionId() != null && !qa.questionId().trim().isEmpty())
+                    .filter(qa ->
+                            qa.questionId() != null && !qa.questionId().trim().isEmpty())
                     .map(qa -> new QuestionAnswer(
                             qa.questionId(),
                             qa.answer() != null ? qa.answer() : ""

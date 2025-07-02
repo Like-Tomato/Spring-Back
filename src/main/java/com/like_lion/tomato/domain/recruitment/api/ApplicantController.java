@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.recruitment.api;
 
 import com.like_lion.tomato.domain.recruitment.dto.applicant.ApplicantResponse;
+import com.like_lion.tomato.domain.recruitment.dto.applicant.PassResponse;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.StatusResponse;
 import com.like_lion.tomato.domain.recruitment.dto.application.ApplicationRequest;
 import com.like_lion.tomato.domain.recruitment.dto.application.ApplicationResponse;
@@ -16,30 +17,35 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/recruit")
 @RequiredArgsConstructor
-public class ApplicationController {
-    private final ApplicationService applicationService;
+public class ApplicantController {
+    private final ApplicantService applicantService;
 
-    @PostMapping("/application")
-    public ApiResponse<ApplicationResponse> submitApplication(
-            @RequestBody @Valid ApplicationRequest request,
+    @GetMapping("/applicants/{applicationId}")
+    public ApiResponse<ApplicantResponse.Detail> getApplicantDetail(
+            @PathVariable String applicationId,
             @RequestHeader("Authorization") String authorization
     ) {
-        ApplicationResponse response = applicationService.submitApplication(request, authorization);
+        ApplicantResponse.Detail response = applicantService.getApplicantDetail(applicationId, authorization);
         return ApiResponse.success(response);
     }
 
-    @GetMapping("/draft")
-    public ApiResponse<ApplicationResponse> getApplication(@RequestHeader("Authorization") String authorization) {
-        ApplicationResponse response = applicationService.getApplicationDetail(authorization);
+    @GetMapping("/applicants")
+    public ApiResponse<StatusResponse> getApplicants(
+            @RequestParam Part part,
+            @RequestParam @NotNull Integer round,
+            @RequestHeader("Authorization") String authorization
+    ) {
+        StatusResponse response = applicantService.getApplicants(part, round, authorization);
         return ApiResponse.success(response);
     }
 
-    @PutMapping("/draft")
-    public ApiResponse<ApplicationResponse> updateApplication(
-            @RequestBody ApplicationRequest request,
+    @PostMapping("/pass/{round}")
+    public ApiResponse<PassResponse> passApplicants(
+            @PathVariable int round,
+            @RequestParam Part part,
             @RequestHeader("Authorization") String authorization
     ) {
-        ApplicationResponse response = applicationService.draftApplication(request, authorization);
+        PassResponse response = applicantService.passApplicants(round, part, authorization);
         return ApiResponse.success(response);
     }
 }
