@@ -6,11 +6,12 @@ import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Entity
 @Table(name = "recruitment_common_questions")
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RecruitmentCommonQuestion extends BaseEntity {
 
     @DomainId(DomainType.RECRUITMENT_COMMON_QUESTION)
@@ -24,9 +25,11 @@ public class RecruitmentCommonQuestion extends BaseEntity {
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
 
-    @Builder
-    private RecruitmentCommonQuestion(Integer sortOrder, String questionText) {
-        this.sortOrder = sortOrder;
+    public void updateQuestionText(String questionText) {
         this.questionText = questionText;
+    }
+
+    public void updateSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
     }
 }
