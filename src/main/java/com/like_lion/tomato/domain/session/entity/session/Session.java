@@ -2,6 +2,7 @@ package com.like_lion.tomato.domain.session.entity.session;
 
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.global.common.BaseEntitiy;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
@@ -10,6 +11,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Builder
@@ -36,9 +39,6 @@ public class Session extends BaseEntitiy {
     @Column(nullable = false, length = 100)
     private String assignmentDdescription;
 
-    @Column
-    private String assignmentLinks;
-
     @Column(nullable = false)
     private LocalDateTime endedAt;
 
@@ -49,4 +49,19 @@ public class Session extends BaseEntitiy {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generation_id")
     private Generation generation;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AssignmentSubmission> assignmentSubmissions = new ArrayList<>();
+
+    // 연관관계 편의 메서드
+    public void addAssignmentSubmission(AssignmentSubmission submission) {
+        assignmentSubmissions.add(submission);
+        submission.setSession(this);
+    }
+
+    public void removeAssignmentSubmission(AssignmentSubmission submission) {
+        assignmentSubmissions.remove(submission);
+        submission.setSession(null);
+    }
+
 }

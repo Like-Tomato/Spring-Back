@@ -64,7 +64,7 @@ public class SessionService {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionException(SessionErrorCode.SESSION_NOT_FOUND));
 
-        // 해당 멤버의 과제 제출 내역 조회 (없을 수도 있음)
+        // 해당 멤버의 과제 제출 내역 조회 (없을 수도 있음) -> 데이터 정합성만 보장되면 Session에서 과제 리스트로 조회할 수 있도록 리팩텅링!
         AssignmentSubmission submissions = assignmentSubmissionRepository
                 .findByMemberIdAndSessionId(memberId, sessionId)
                 .orElse(null);

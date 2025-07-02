@@ -1,14 +1,15 @@
 package com.like_lion.tomato.domain.session.api;
 
 import com.like_lion.tomato.domain.session.dto.SessionListRes;
+import com.like_lion.tomato.domain.session.dto.request.AssignmentLinksSubmissionReq;
 import com.like_lion.tomato.domain.session.dto.request.SessionPostReq;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
+import com.like_lion.tomato.domain.session.service.AssignmentSubmissionService;
 import com.like_lion.tomato.domain.session.service.SessionService;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.global.util.HttpHeaderUtil;
-import com.like_lion.tomato.infra.s3.dto.request.FileRegisterReq;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class SessionController {
 
     private final SessionService sessionService;
+    private final AssignmentSubmissionService assignmentSubmissionService;
     private final JwtService jwtService;
 
     /**
@@ -65,7 +67,6 @@ public class SessionController {
      * @param request HttpServletRequest (accessToken에서 memberId 추출)
      */
     @PostMapping("/{sessionId}/file/assignment")
-    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ApiResponse.MessageData> create(
             @PathVariable String sessionId,
             @RequestBody @Valid SessionPostReq req,
@@ -77,4 +78,19 @@ public class SessionController {
         sessionService.create(sessionId, memberId, req);
         return ApiResponse.success("세션 파일 등록 성공");
     }
+
+    @PostMapping("/assignment/{sessionId}/submission")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ApiResponse<ApiResponse.MessageData> submitAssignmentLinks(
+            @PathVariable String sessionId,
+            @RequestBody @Valid AssignmentLinksSubmissionReq req,
+            HttpServletRequest request
+    ) {
+        String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
+        String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
+
+        assignmentSubmissionService.submitAssignmentLinks(sessionId, memberId, req);
+        return ApiResponse.success("과제 제출 성공");
+    }
 }
+
