@@ -1,18 +1,17 @@
 package com.like_lion.tomato.domain.session.api;
 
-import com.like_lion.tomato.domain.session.dto.SessionListRes;
-import com.like_lion.tomato.domain.session.dto.request.AssignmentLinksSubmissionReq;
-import com.like_lion.tomato.domain.session.dto.request.SessionPostReq;
-import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
 import com.like_lion.tomato.domain.session.dto.response.SessionListWithStateRes;
-import com.like_lion.tomato.domain.session.service.AssignmentSubmissionService;
+import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
 import com.like_lion.tomato.domain.session.service.SessionService;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.global.util.HttpHeaderUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,82 +19,57 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/session")
 @RestController
+@Tag(name = "Session", description = "세션(주차별 강의/과제) 관련 API")
 public class SessionController {
 
     private final SessionService sessionService;
-    private final AssignmentSubmissionService assignmentSubmissionService;
     private final JwtService jwtService;
 
-    /**
-     * 세션 전체/파트별 목록 조회
-     * @param part (optional) 파트명 (예: BACKEND, FRONTEND, DESIGN)
-     * @return 세션 목록 (최신순)
-     */
+    @Operation(
+            summary = "세션 전체/파트별 목록 + 제출여부 조회",
+            description = """
+                    세션 자료(주차별 강의/과제) 목록을 파트, 주차별로 필터링해서 조회합니다.
+                    각 세션별로 현재 로그인한 멤버의 과제 제출여부(submitted)까지 함께 반환합니다.
+                    
+                    - part: BACKEND, FRONTEND, DESIGN, PM, AI 등 (optional)
+                    - week: 주차(숫자, optional)
+                    - submitted: true(제출), false(미제출)
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(name = "part", description = "세션 파트 필터 (예: BACKEND, FRONTEND, DESIGN, PM, AI)", example = "BACKEND"),
+                    @Parameter(name = "week", description = "주차 필터 (숫자)", example = "1")
+            }
+
+    )
     @GetMapping
     @PreAuthorize("hasRole('MEMBER')")
     public ApiResponse<SessionListWithStateRes> readAllByFilter(
             @RequestParam(required = false) String part,
             @RequestParam(required = false) Integer week,
-            HttpServletRequest request) {
+            HttpServletRequest request
+    ) {
         String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
         String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
-        //memberId 토큰으로부터 추출하는 로직
         return ApiResponse.success(sessionService.readAllSessionsWithSubmissionState(memberId, part, week));
     }
 
-    /**
-     * 세션 상세/제출파일 상세정보 조회
-     * @param sessionId 세션 ID (PathVariable)
-     * @param request HttpServletRequest (헤더에서 토큰 추출용)
-     * @return 세션 상세 정보 + 해당 멤버의 과제 제출 내역 등
-     */
+    @Operation(
+            summary = "세션 상세 + 제출 내역 조회",
+            description = "특정 세션의 상세 정보와 해당 멤버의 과제 제출 내역을 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(name = "sessionId", description = "세션 ID", required = true)
+            }
+    )
     @GetMapping("/{sessionId}")
     @PreAuthorize("hasRole('MEMBER')")
     public ApiResponse<SessionDetailRes> readSessionWithAssignment(
             @PathVariable String sessionId,
             HttpServletRequest request
     ) {
-        // 1. 헤더에서 Bearer 토큰 추출
         String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
-
-        // 2. JwtService로부터 멤버 정보 추출
         String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
-
-        // 3. 서비스 호출 (세션 + 파일 + 과제 + 제출 내역 등)
         return ApiResponse.success(sessionService.getSessionWithAssignment(sessionId, memberId));
     }
-
-    /**
-     * 세션 자료(파일) 등록 (ADMIN만 가능)
-     * @param sessionId 세션 ID
-     * @param req 파일 등록 요청 DTO(fileKey, name, mimeType, size)
-     * @param request HttpServletRequest (accessToken에서 memberId 추출)
-     */
-    @PostMapping("/{sessionId}/file/assignment")
-    public ApiResponse<ApiResponse.MessageData> create(
-            @PathVariable String sessionId,
-            @RequestBody @Valid SessionPostReq req,
-            HttpServletRequest request
-    ) {
-        String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
-        String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
-
-        sessionService.create(sessionId, memberId, req);
-        return ApiResponse.success("세션 파일 등록 성공");
-    }
-
-    @PostMapping("/assignment/{sessionId}/submission")
-    @PreAuthorize("hasRole('MEMBER')")
-    public ApiResponse<ApiResponse.MessageData> submitAssignmentLinks(
-            @PathVariable String sessionId,
-            @RequestBody @Valid AssignmentLinksSubmissionReq req,
-            HttpServletRequest request
-    ) {
-        String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
-        String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
-
-        assignmentSubmissionService.submitAssignmentLinks(sessionId, memberId, req);
-        return ApiResponse.success("과제 제출 성공");
-    }
 }
-
