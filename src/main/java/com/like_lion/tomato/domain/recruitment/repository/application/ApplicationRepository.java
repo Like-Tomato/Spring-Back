@@ -1,11 +1,8 @@
 package com.like_lion.tomato.domain.recruitment.repository.application;
 
 import com.like_lion.tomato.domain.recruitment.entity.application.Application;
-import com.like_lion.tomato.global.common.enums.Part;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ApplicationRepository extends JpaRepository<Application, String> {
@@ -18,8 +15,4 @@ public interface ApplicationRepository extends JpaRepository<Application, String
     void deleteByMemberIdAndSubmittedAtIsNull(String memberId);
 
     Optional<Application> findByMemberIdAndSubmittedAtIsNull(String memberId);
-
-    List<Application> findAllBySubmittedIsNotNullAndPart(Part part);
-
-    List<Application> findAllBySubmittedIsNotNull();
 }
