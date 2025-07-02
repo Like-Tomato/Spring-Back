@@ -3,6 +3,7 @@ package com.like_lion.tomato.domain.member.api;
 
 import com.like_lion.tomato.domain.member.dto.request.UpdateMemberPartReq;
 import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
+import com.like_lion.tomato.domain.member.dto.request.UpdateMemberRoleReq;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileAssignRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
@@ -93,6 +94,22 @@ public class MemberController {
         memberService.updateMemberPart(memberId, request.getPart());
         return ApiResponse.success(new ApiResponse.MessageData("파트가 성공적으로 변경되었습니다."));
     }
+
+    @Operation(
+            summary = "멤버 권한 수정 (관리자)",
+            description = "ADMIN 권한으로 멤버의 권한(Role)을 수정합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PatchMapping("/{memberId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ApiResponse.MessageData> updateRole(
+            @PathVariable String memberId,
+            @RequestBody UpdateMemberRoleReq request
+    ) {
+        memberService.updateMemberRole(memberId, request.getRole());
+        return ApiResponse.success(new ApiResponse.MessageData("권한이 성공적으로 변경되었습니다."));
+    }
+
 
 
 
