@@ -1,6 +1,6 @@
 package com.like_lion.tomato.domain.member.dto.response;
 
-import com.like_lion.tomato.domain.member.dto.response.SessionWithState;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.infra.s3.dto.response.PresignedUrlRes;
 import lombok.Builder;
@@ -10,11 +10,23 @@ import java.util.List;
 
 @Getter
 public class MemberProfileAssignRes {
+
+    @JsonProperty("id")
     private final String id;
+
+    @JsonProperty("name")
     private final String name;
+
+    @JsonProperty("part")
     private final String part;
+
+    @JsonProperty("year")
     private final int year;
+
+    @JsonProperty("profile_image")
     private final PresignedUrlRes profileImage;
+
+    @JsonProperty("sessions")
     private final List<SessionWithState> sessions;
 
     @Builder
