@@ -13,6 +13,23 @@ java {
 	}
 }
 
+bootJar {
+	archiveFileName = "app.jar"
+}
+
+jar {
+	enabled = false
+}
+
+sourceSets {
+	main {
+		resources {
+			srcDirs = ['src/main/resources']
+			include '**/*.yml'
+		}
+	}
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor

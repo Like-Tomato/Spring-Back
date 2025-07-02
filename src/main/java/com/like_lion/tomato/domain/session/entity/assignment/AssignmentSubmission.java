@@ -2,7 +2,7 @@ package com.like_lion.tomato.domain.session.entity.assignment;
 
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.session.entity.session.Session;
-import com.like_lion.tomato.global.common.BaseEntitiy;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class AssignmentSubmission extends BaseEntitiy {
+public class AssignmentSubmission extends BaseEntity {
 
     @DomainId(DomainType.ASSIGNMENT_SUBMISSION)
     @Id

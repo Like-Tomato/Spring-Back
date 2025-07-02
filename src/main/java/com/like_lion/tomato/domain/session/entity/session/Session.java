@@ -3,7 +3,7 @@ package com.like_lion.tomato.domain.session.entity.session;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
-import com.like_lion.tomato.global.common.BaseEntitiy;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Session extends BaseEntitiy {
+public class Session extends BaseEntity {
 
     @DomainId(DomainType.SESSION)
     @Id

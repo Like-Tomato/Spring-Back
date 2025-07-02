@@ -23,7 +23,7 @@ import java.io.IOException;
 @Component
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;;
+    private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
     @Override
