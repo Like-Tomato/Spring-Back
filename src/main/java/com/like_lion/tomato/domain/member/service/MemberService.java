@@ -95,13 +95,6 @@ public class MemberService {
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public void validateAdminPermission(String authorization) {
-        Member member = extractMemberFromToken(authorization);
-        if (!member.hasAdminRoleOrHigher()) {
-            throw new AuthException(AuthErrorCode.ADMIN_REQUIRED);
-        }
-    }
-
     public Member getValidateAdmin(String authorization) {
         Member member = extractMemberFromToken(authorization);
         if (!member.hasAdminRoleOrHigher()) {

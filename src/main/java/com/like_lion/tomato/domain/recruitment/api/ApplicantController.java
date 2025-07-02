@@ -7,6 +7,7 @@ import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class ApplicantController {
     private final ApplicantService applicantService;
 
     @GetMapping("/applicants/{applicationId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<ApplicantResponse.Detail> getApplicantDetail(
             @PathVariable String applicationId,
             @RequestHeader("Authorization") String authorization
@@ -25,6 +27,7 @@ public class ApplicantController {
     }
 
     @GetMapping("/applicants")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<StatusResponse> getApplicants(
             @RequestParam Part part,
             @RequestParam @NotNull Integer round,

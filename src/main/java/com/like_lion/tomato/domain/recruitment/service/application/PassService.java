@@ -1,6 +1,5 @@
 package com.like_lion.tomato.domain.recruitment.service.application;
 
-import com.like_lion.tomato.domain.member.service.MemberService;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.ApplicantResponse;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.PassResponse;
 import com.like_lion.tomato.domain.recruitment.entity.application.Application;
@@ -26,12 +25,9 @@ import static com.like_lion.tomato.domain.recruitment.entity.constant.Applicatio
 public class PassService {
 
     private final ApplicationRepository applicationRepository;
-    private final MemberService memberService;
     private final EmailService emailService;
 
-    public PassResponse passApplicants(int round, Part part, String authorization) {
-        memberService.validateAdminPermission(authorization);
-
+    public PassResponse passApplicants(int round, Part part) {
         StatusTransition transition = getApplicationStatusTransition(round);
         List<Application> applications = getApplicationsByStatusAndPart(transition.fromStatus(), part);
 
@@ -40,9 +36,7 @@ public class PassService {
         return buildPassResponse(round, applications);
     }
 
-    public PassResponse sendPassNotifications(int round, String authorization) {
-        memberService.validateAdminPermission(authorization);
-
+    public PassResponse sendPassNotifications(int round) {
         ApplicationStatus targetStatus = getTargetStatusByRound(round);
         List<Application> passApplications = applicationRepository.findAllByStatus(targetStatus);
 

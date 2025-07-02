@@ -5,6 +5,7 @@ import com.like_lion.tomato.domain.recruitment.service.application.PassService;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,21 +15,16 @@ public class PassController {
     private final PassService passService;
 
     @PostMapping("/pass/{round}")
-    public ApiResponse<PassResponse> passApplicants(
-            @PathVariable int round,
-            @RequestParam Part part,
-            @RequestHeader("Authorization") String authorization
-    ) {
-        PassResponse response = passService.passApplicants(round, part, authorization);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<PassResponse> passApplicants(@PathVariable int round, @RequestParam Part part) {
+        PassResponse response = passService.passApplicants(round, part);
         return ApiResponse.success(response);
     }
 
     @PostMapping("/notifications/pass/{round}")
-    public ApiResponse<PassResponse> passApplicants(
-            @PathVariable int round,
-            @RequestHeader("Authorization") String authorization
-    ) {
-        PassResponse response = passService.sendPassNotifications(round, authorization);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<PassResponse> passApplicants(@PathVariable int round) {
+        PassResponse response = passService.sendPassNotifications(round);
         return ApiResponse.success(response);
     }
 }
