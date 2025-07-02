@@ -1,7 +1,7 @@
 package com.like_lion.tomato.domain.session.entity.session;
 
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.global.common.BaseEntitiy;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.common.enums.MimeType;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity(name = "session_file")
-public class SessionFIle extends BaseEntitiy {
+public class SessionFIle extends BaseEntity {
 
     @DomainId(DomainType.SESSION_FILE)
     @Id
