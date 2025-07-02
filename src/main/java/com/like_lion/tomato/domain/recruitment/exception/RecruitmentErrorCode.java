@@ -24,6 +24,7 @@ public enum RecruitmentErrorCode implements ErrorCode {
 
     // 리소스 없음 오류
     APPLICATION_NOT_FOUND(404, "지원서를 찾을 수 없습니다"),
+    QUESTION_NOT_FOUND(404, "질문을 찾을 수 없습니다"),
 
     // 충돌 오류
     APPLICATION_ALREADY_EXISTS(409, "이미 지원서가 존재합니다"),
