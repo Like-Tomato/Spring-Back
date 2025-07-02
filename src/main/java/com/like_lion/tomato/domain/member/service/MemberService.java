@@ -139,4 +139,14 @@ public class MemberService {
 
         return member;
     }
+
+    @Transactional
+    public void updateMemberPart(String memberId, String part) {
+        Member member = memberReader.findOptionById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        if (!Part.isValid(part)) throw new MemberException(MemberErrorCode.INVALID_PART);
+
+        member.updatePart(Part.valueOf(part.toUpperCase()));
+        memberWriter.save(member);
+    }
 }

@@ -108,6 +108,11 @@ public class Member {
         // 필요하다면 email, phone 등 추가 필드도 여기에 업데이트
     }
 
+    public void updatePart(Part part) {
+        this.part = part;
+    }
+
+
     /**
      public void addassignment(Assignment assignment) {
      assignments.add(assignment);

@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.member.api;
 
 
+import com.like_lion.tomato.domain.member.dto.request.UpdateMemberPartReq;
 import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileAssignRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
@@ -77,5 +78,23 @@ public class MemberController {
         String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
         return ApiResponse.success(memberService.getMemberProfileWithAssignments(memberId));
     }
+
+    @Operation(
+            summary = "멤버 파트 수정 (관리자)",
+            description = "ADMIN 권한으로 멤버의 파트(직군)를 수정합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PatchMapping("/{memberId}/part")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ApiResponse.MessageData> updatePart(
+            @PathVariable String memberId,
+            @RequestBody UpdateMemberPartReq request
+    ) {
+        memberService.updateMemberPart(memberId, request.getPart());
+        return ApiResponse.success(new ApiResponse.MessageData("파트가 성공적으로 변경되었습니다."));
+    }
+
+
+
 }
 
