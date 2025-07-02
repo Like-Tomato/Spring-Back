@@ -1,7 +1,8 @@
-package com.like_lion.tomato.domain.recruitment.service.subscription;
+package com.like_lion.tomato.domain.recruitment.service.notification;
 
 import com.like_lion.tomato.domain.recruitment.entity.subscription.RecruitmentSchedule;
 import com.like_lion.tomato.domain.recruitment.repository.subscription.RecruitmentScheduleRepository;
+import com.like_lion.tomato.domain.recruitment.service.subscription.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
