@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.like_lion.tomato.domain.archive.exception.ArchiveErrorCode;
 import com.like_lion.tomato.domain.archive.exception.ArchiveException;
+import com.like_lion.tomato.domain.archive.project.entity.constant.Platform;
 import com.like_lion.tomato.domain.archive.project.entity.constant.ProjectCategory;
 
 import java.time.LocalDate;
@@ -31,8 +32,8 @@ public record ProjectDto(
             String description,
             Integer years,
             ProjectCategory category,
-            @JsonProperty("project_type")
-            String projectType,
+            @JsonProperty("platform")
+            Platform platform,
             @JsonProperty("is_excellent")
             Boolean isExcellent
     ) {
