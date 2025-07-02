@@ -4,6 +4,7 @@ import com.like_lion.tomato.domain.session.dto.SessionListRes;
 import com.like_lion.tomato.domain.session.dto.request.AssignmentLinksSubmissionReq;
 import com.like_lion.tomato.domain.session.dto.request.SessionPostReq;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
+import com.like_lion.tomato.domain.session.dto.response.SessionListWithStateRes;
 import com.like_lion.tomato.domain.session.service.AssignmentSubmissionService;
 import com.like_lion.tomato.domain.session.service.SessionService;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
@@ -32,10 +33,14 @@ public class SessionController {
      */
     @GetMapping
     @PreAuthorize("hasRole('MEMBER')")
-    public ApiResponse<SessionListRes> readAllByFilter(
+    public ApiResponse<SessionListWithStateRes> readAllByFilter(
             @RequestParam(required = false) String part,
-            @RequestParam(required = false) Integer week) {
-        return ApiResponse.success(sessionService.readAllSessions(part, week));
+            @RequestParam(required = false) Integer week,
+            HttpServletRequest request) {
+        String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
+        String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
+        //memberId 토큰으로부터 추출하는 로직
+        return ApiResponse.success(sessionService.readAllSessionsWithSubmissionState(memberId, part, week));
     }
 
     /**

@@ -16,7 +16,7 @@ public interface SessionRepository extends JpaRepository<Session, String> {
         SELECT s FROM Session s
         WHERE (:part IS NULL OR s.part = :part)
           AND (:week IS NULL OR s.week = :week)
-        ORDER BY s.startedAt DESC
+        ORDER BY s.week ASC
     """)
     List<Session> findAllByPartOrAll(
             @Param("part") Part part,

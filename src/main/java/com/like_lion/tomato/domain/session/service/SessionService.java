@@ -7,7 +7,9 @@ import com.like_lion.tomato.domain.member.implement.MemberReader;
 import com.like_lion.tomato.domain.session.dto.SessionListRes;
 import com.like_lion.tomato.domain.session.dto.request.SessionPostReq;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
+import com.like_lion.tomato.domain.session.dto.response.SessionListWithStateRes;
 import com.like_lion.tomato.domain.session.dto.response.SessionSimpleRes;
+import com.like_lion.tomato.domain.session.dto.response.SessionWithState;
 import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.domain.session.entity.session.Session;
 import com.like_lion.tomato.domain.session.entity.session.SessionFIle;
@@ -39,20 +41,34 @@ public class SessionService {
     @Value("${cloud.s3.download.expTime}")
     private Long downloadExpTime;
 
+    /**
+     * 파트/주차별 전체 세션 + 멤버별 과제 제출여부 포함 조회
+     */
     @Transactional(readOnly = true)
-    public SessionListRes readAllSessions(String part, Integer week) {
-
-        if(!part.isBlank() && !Part.isValid(part)) throw new SessionException(SessionErrorCode.INVALID_PART);
-        Part partEnum = Part.valueOf(part.toUpperCase());
+    public SessionListWithStateRes readAllSessionsWithSubmissionState(String memberId, String part, Integer week) {
+        Part partEnum = null;
+        if (part != null && !part.isBlank()) {
+            if (!Part.isValid(part)) throw new IllegalArgumentException("유효하지 않은 파트입니다.");
+            partEnum = Part.valueOf(part.toUpperCase());
+        }
 
         List<Session> sessionEntities = sessionRepository.findAllByPartOrAll(partEnum, week);
 
-        List<SessionSimpleRes> simpleResList = sessionEntities.stream()
-                .map(SessionSimpleRes::from)
+        List<SessionWithState> sessionWithStates = sessionEntities.stream()
+                .map(session -> {
+                    boolean submitted = assignmentSubmissionRepository.existsByMemberIdAndSessionId(memberId, session.getId());
+                    return SessionWithState.builder()
+                            .sessionId(session.getId())
+                            .sessionTitle(session.getTitle())
+                            .week(session.getWeek())
+                            .submitted(submitted)
+                            .build();
+                })
                 .toList();
 
-        return SessionListRes.from(simpleResList);
+        return SessionListWithStateRes.from(sessionWithStates);
     }
+
     /**
      * 세션 상세 + 해당 멤버의 과제 제출 내역 조회
      * @param sessionId 세션 ID
