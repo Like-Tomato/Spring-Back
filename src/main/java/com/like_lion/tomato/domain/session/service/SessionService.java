@@ -40,12 +40,12 @@ public class SessionService {
     private Long downloadExpTime;
 
     @Transactional(readOnly = true)
-    public SessionListRes readAllSessions(String part) {
+    public SessionListRes readAllSessions(String part, Integer week) {
 
         if(!part.isBlank() && !Part.isValid(part)) throw new SessionException(SessionErrorCode.INVALID_PART);
         Part partEnum = Part.valueOf(part.toUpperCase());
 
-        List<Session> sessionEntities = sessionRepository.findAllByPartOrAll(partEnum);
+        List<Session> sessionEntities = sessionRepository.findAllByPartOrAll(partEnum, week);
 
         List<SessionSimpleRes> simpleResList = sessionEntities.stream()
                 .map(SessionSimpleRes::from)

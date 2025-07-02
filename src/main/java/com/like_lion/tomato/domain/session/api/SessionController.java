@@ -30,8 +30,10 @@ public class SessionController {
      */
     @GetMapping
     @PreAuthorize("hasRole('MEMBER')")
-    public ApiResponse<SessionListRes> readAllByFilter(@RequestParam(required = false) String part) {
-        return ApiResponse.success(sessionService.readAllSessions(part));
+    public ApiResponse<SessionListRes> readAllByFilter(
+            @RequestParam(required = false) String part,
+            @RequestParam(required = false) Integer week) {
+        return ApiResponse.success(sessionService.readAllSessions(part, week));
     }
 
     /**
