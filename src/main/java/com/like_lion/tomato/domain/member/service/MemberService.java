@@ -6,6 +6,8 @@ import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.domain.member.repository.MemberRepository;
+import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
@@ -24,6 +26,8 @@ public class MemberService {
 
     private final MemberReader memberReader;
     private final MemberWriter memberWriter;
+    private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     // private final FileUploadService fileUploadService; 의존성 추가 후 구현!
 
 
@@ -81,5 +85,11 @@ public class MemberService {
         //member.update();
         memberWriter.save(member);
         return MemberProfileRes.from(member);
+    }
+
+    public Member extractMemberFromToken(String token) {
+        String memberId = jwtTokenProvider.extractMemberIdFromToken(token);
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }
