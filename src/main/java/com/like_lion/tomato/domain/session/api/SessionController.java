@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.session.api;
 
 import com.like_lion.tomato.domain.session.dto.SessionListRes;
+import com.like_lion.tomato.domain.session.dto.request.SessionPostReq;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
 import com.like_lion.tomato.domain.session.service.SessionService;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
@@ -61,17 +62,17 @@ public class SessionController {
      * @param req 파일 등록 요청 DTO(fileKey, name, mimeType, size)
      * @param request HttpServletRequest (accessToken에서 memberId 추출)
      */
-    @PostMapping("/{sessionId}/file")
+    @PostMapping("/{sessionId}/file/assignment")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<?> registerSessionFile(
+    public ApiResponse<ApiResponse.MessageData> create(
             @PathVariable String sessionId,
-            @RequestBody @Valid FileRegisterReq req,
+            @RequestBody @Valid SessionPostReq req,
             HttpServletRequest request
     ) {
         String accessToken = HttpHeaderUtil.getAccessToken(request, JwtTokenProvider.BEARER_PREFIX);
         String memberId = jwtService.extractMemberIdFromAccessToken(accessToken);
 
-        sessionService.registerFile(sessionId, memberId, req);
+        sessionService.create(sessionId, memberId, req);
         return ApiResponse.success("세션 파일 등록 성공");
     }
 }

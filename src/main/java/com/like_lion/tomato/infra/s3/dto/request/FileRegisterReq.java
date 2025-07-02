@@ -9,9 +9,7 @@ import jakarta.validation.constraints.NotNull;
 //파일 업로드시 세션, 갤러리, 과제 등에서 모두 import해서 사용
 public record FileRegisterReq(
         @NotNull String fileKey,
-        @NotNull String originalName,
-        @NotNull String mimeType,
-        @NotNull Long size
+        @NotNull String mimeType
 ) {
     /**
      * FileRegisterReq → SessionFIle 변환
@@ -24,11 +22,9 @@ public record FileRegisterReq(
         return SessionFIle.builder()
                 .session(session)
                 .member(member)
-                .name(this.originalName())
                 .fileKey(this.fileKey())
                 .prefix(this.extractPrefix(fileKey))
                 .mimeType(MimeType.valueOf(this.mimeType().toUpperCase()))
-                .size(this.size())
                 .build();
     }
 
