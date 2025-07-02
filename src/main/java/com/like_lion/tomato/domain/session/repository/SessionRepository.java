@@ -37,4 +37,7 @@ public interface SessionRepository extends JpaRepository<Session, String> {
             @Param("sessionId") String sessionId
     );
 
+    List<Session> findByPartAndGeneration_Year(Part part, int year);
+
+
 }

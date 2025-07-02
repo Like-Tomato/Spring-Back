@@ -4,11 +4,17 @@ package com.like_lion.tomato.domain.member.service;
 import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
 import com.like_lion.tomato.domain.auth.exception.AuthException;
 import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
+import com.like_lion.tomato.domain.member.dto.response.MemberProfileAssignRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileListRes;
 import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
+import com.like_lion.tomato.domain.member.dto.response.SessionWithState;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
+import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
+import com.like_lion.tomato.domain.session.entity.session.Session;
+import com.like_lion.tomato.domain.session.repository.AssignmentSubmissionRepository;
+import com.like_lion.tomato.domain.session.repository.SessionRepository;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
@@ -23,6 +29,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -30,6 +38,8 @@ public class MemberService {
     private final MemberReader memberReader;
     private final MemberWriter memberWriter;
     private final MemberRepository memberRepository;
+    private final SessionRepository sessionRepository;
+    private final AssignmentSubmissionRepository assignmentSubmissionRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3PresignedService s3PresignedService;
 
@@ -74,6 +84,33 @@ public class MemberService {
                 );
         return MemberProfileRes.from(member, s3PresignedService.getPresignedUrlForGet(member.getFileKey()));
     }
+
+    @Transactional
+    public MemberProfileAssignRes getMemberProfileWithAssignments(String memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        Part part = member.getPart();
+        int year = member.getLatestYear();
+
+        List<Session> sessions = sessionRepository.findByPartAndGeneration_Year(part, year);
+
+        List<SessionWithState> sessionWithStates = sessions.stream()
+                .map(session -> {
+                    boolean submitted = assignmentSubmissionRepository.existsByMemberIdAndSessionId(memberId, session.getId());
+                    return SessionWithState.builder()
+                            .sessionId(session.getId())
+                            .sessionTitle(session.getTitle())
+                            .week(session.getWeek())
+                            .submitted(submitted)
+                            .build();
+                })
+                .toList();
+
+        // 멤버 프로필 이미지 presigned URL 발급 후 저장
+        return MemberProfileAssignRes.from(member, sessionWithStates, s3PresignedService.getPresignedUrlForGet(member.getFileKey()));
+    }
+
 
     @Transactional
     public MemberProfileRes update(String memberId, UpdateMemberProfileReq request) {

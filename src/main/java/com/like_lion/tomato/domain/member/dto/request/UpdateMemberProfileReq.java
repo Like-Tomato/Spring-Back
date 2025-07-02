@@ -1,5 +1,6 @@
 package com.like_lion.tomato.domain.member.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,18 +10,35 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class UpdateMemberProfileReq {
 
-    private String name; // username 대신 name으로 통일
+    @JsonProperty("id")
+    private String id;
+
+    @JsonProperty("email")
+    private String email;
+
+    @JsonProperty("name")
+    private String name;
+
+    @JsonProperty("major")
     private String major;
+
+    @JsonProperty("fileKey")
+    private String fileKey; // MEMBER/UUID/12444.jpg
+
+    @JsonProperty("introduce")
     private String introduce;
+
+    @JsonProperty("links")
     private String links;
-    private MultipartFile profileImg; // 이미지 파일
 
     @Builder
-    public UpdateMemberProfileReq(String name, String major, String introduce, String links, MultipartFile profileImg) {
+    public UpdateMemberProfileReq(String id, String email, String name, String major, String fileKey, String introduce, String links) {
+        this.id = id;
+        this.email = email;
         this.name = name;
         this.major = major;
+        this.fileKey = fileKey;
         this.introduce = introduce;
         this.links = links;
-        this.profileImg = profileImg;
     }
 }
