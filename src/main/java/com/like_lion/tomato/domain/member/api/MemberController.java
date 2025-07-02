@@ -17,7 +17,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -60,9 +59,9 @@ public class MemberController {
     )
     @PutMapping("/{memberId}")
     @PreAuthorize("hasRole('MEMBER') and #memberId == authentication.principal.id")
-    public ApiResponse<MemberProfileRes> update(@PathVariable String memberId,
-                                                    @Valid @ModelAttribute UpdateMemberProfileReq request) {
-        return ApiResponse.success(memberService.update(memberId, request));
+    public ApiResponse<ApiResponse.MessageData> update(@PathVariable String memberId,
+                                                       @Valid @ModelAttribute UpdateMemberProfileReq request) {
+        return ApiResponse.success("프로필 변경이 성공적으로 완료되었습니다.");
     }
 
     @Operation(

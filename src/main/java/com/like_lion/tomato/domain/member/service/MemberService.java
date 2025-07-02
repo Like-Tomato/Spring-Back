@@ -113,21 +113,16 @@ public class MemberService {
 
 
     @Transactional
-    public MemberProfileRes update(String memberId, UpdateMemberProfileReq request) {
+    public void update(String memberId, UpdateMemberProfileReq request) {
         Member member = memberReader.findOptionById(memberId)
                 .orElseThrow(
                         () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
                 );
         // 프로필 이미지 업로드 로직 구현!
-        String profileUrl = member.getProfileUrl();
-        if(profileUrl != null && !profileUrl.isEmpty()) {
-            // profileUrl = fileUploadService.upload(request.getProfileImg());
-            // 의존성 추가 구현 후 과련 예외처리도 진행!
-        }
+        member.update(request);
 
-        //member.update();
+        // JPA의 변경 감지로 트랜잭션 종료 시 자동 update (save 불필요)
         memberWriter.save(member);
-        return MemberProfileRes.from(member);
     }
 
     public Member extractMemberFromToken(String token) {

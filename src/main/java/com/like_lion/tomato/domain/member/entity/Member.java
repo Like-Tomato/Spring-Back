@@ -1,5 +1,6 @@
 package com.like_lion.tomato.domain.member.entity;
 
+import com.like_lion.tomato.domain.member.dto.request.UpdateMemberProfileReq;
 import com.like_lion.tomato.global.auth.model.Role;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
@@ -96,6 +97,15 @@ public class Member {
 
     public void removeMemberGeneration(MemberGeneration memberGeneration) {
         memberGenerations.remove(memberGeneration);
+    }
+
+    public void update(UpdateMemberProfileReq req) {
+        if (req.getName() != null) this.username = req.getName();
+        if (req.getMajor() != null) this.major = req.getMajor();
+        if (req.getIntroduce() != null) this.introduce = req.getIntroduce();
+        if (req.getLinks() != null) this.links = req.getLinks();
+        if (req.getFileKey() != null) this.fileKey = req.getFileKey();
+        // 필요하다면 email, phone 등 추가 필드도 여기에 업데이트
     }
 
     /**
