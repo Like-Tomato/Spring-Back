@@ -16,7 +16,7 @@ public class MemberProfileRes {
     @JsonProperty("id")
     private String id;
 
-    @JsonProperty("contactEmail")
+    @JsonProperty("email")
     private String email;
 
     @JsonProperty("name")
@@ -28,8 +28,8 @@ public class MemberProfileRes {
     @JsonProperty("year")
     private int year;
 
-    @JsonProperty("image_file")
-    private PresignedUrlRes imageFile;
+    @JsonProperty("profile_file")
+    private PresignedUrlRes profileFile;
 
     @JsonProperty("introduce")
     private String introduce;
@@ -44,28 +44,28 @@ public class MemberProfileRes {
     private Role role;
 
     @Builder
-    public MemberProfileRes(String id, String email, String name, String major, int year, PresignedUrlRes imageFile,
+    public MemberProfileRes(String id, String email, String name, String major, int year, PresignedUrlRes profileFile,
                             String introduce, Part part, String links, Role role) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.major = major;
         this.year = year;
-        this.imageFile = imageFile;
+        this.profileFile = profileFile;
         this.introduce = introduce;
         this.part = part;
         this.links = links;
         this.role = role;
     }
 
-    public static MemberProfileRes from(Member member, PresignedUrlRes imageFile) {
+    public static MemberProfileRes from(Member member, PresignedUrlRes profileFile) {
         return MemberProfileRes.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .name(member.getUsername())
                 .major(member.getMajor())
                 .year(member.getLatestYear())
-                .imageFile(imageFile)
+                .profileFile(profileFile)
                 .introduce(member.getIntroduce())
                 .part(member.getPart())
                 .links(member.getLinks())

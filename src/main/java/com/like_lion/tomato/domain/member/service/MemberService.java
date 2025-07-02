@@ -58,7 +58,10 @@ public class MemberService {
         return MemberProfileListRes.from(
                 memberPage.getContent()
                         .stream()
-                        .map(MemberProfileRes::from)
+                        .map(member -> MemberProfileRes.from(
+                                member,
+                                s3PresignedService.getPresignedUrlForGet(member.getFileKey())
+                        ))
                         .toList()
         );
     }
