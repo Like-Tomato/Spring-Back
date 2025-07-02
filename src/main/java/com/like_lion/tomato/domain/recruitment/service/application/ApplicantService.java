@@ -3,9 +3,7 @@ package com.like_lion.tomato.domain.recruitment.service.application;
 import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
 import com.like_lion.tomato.domain.auth.exception.AuthException;
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
-import com.like_lion.tomato.domain.member.exception.MemberException;
-import com.like_lion.tomato.domain.member.repository.MemberRepository;
+import com.like_lion.tomato.domain.member.service.MemberService;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.ApplicantResponse;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.PassResponse;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.StatusResponse;
@@ -14,7 +12,6 @@ import com.like_lion.tomato.domain.recruitment.entity.constant.ApplicationStatus
 import com.like_lion.tomato.domain.recruitment.exception.RecruitmentErrorCode;
 import com.like_lion.tomato.domain.recruitment.exception.RecruitmentException;
 import com.like_lion.tomato.domain.recruitment.repository.application.ApplicationRepository;
-import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.common.enums.Part;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +27,11 @@ import static com.like_lion.tomato.domain.recruitment.entity.constant.Applicatio
 @Service
 @RequiredArgsConstructor
 public class ApplicantService {
-    private final MemberRepository memberRepository;
     private final ApplicationRepository applicationRepository;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
 
     public Detail getApplicantDetail(String applicationId, String authorization) {
-        String reviewerId = jwtTokenProvider.extractMemberIdFromToken(authorization);
-
-        Member reviewer = memberRepository.findById(reviewerId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member reviewer = memberService.extractMemberFromToken(authorization);
 
         if (!reviewer.hasAdminRoleOrHigher()) {
             throw new AuthException((AuthErrorCode.ADMIN_REQUIRED));
@@ -51,10 +44,7 @@ public class ApplicantService {
     }
 
     public StatusResponse getApplicants(Part part, @NotNull Integer round, String authorization) {
-        String reviewerId = jwtTokenProvider.extractMemberIdFromToken(authorization);
-
-        Member reviewer = memberRepository.findById(reviewerId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member reviewer = memberService.extractMemberFromToken(authorization);
 
         if (!reviewer.hasAdminRoleOrHigher()) {
             throw new AuthException((AuthErrorCode.ADMIN_REQUIRED));
@@ -75,10 +65,7 @@ public class ApplicantService {
     }
 
     public PassResponse passApplicants(int round, Part part, String authorization) {
-        String reviewerId = jwtTokenProvider.extractMemberIdFromToken(authorization);
-
-        Member reviewer = memberRepository.findById(reviewerId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member reviewer = memberService.extractMemberFromToken(authorization);
 
         if (!reviewer.hasAdminRoleOrHigher()) {
             throw new AuthException((AuthErrorCode.ADMIN_REQUIRED));
