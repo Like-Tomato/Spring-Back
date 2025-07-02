@@ -1,0 +1,30 @@
+#name: Deploy To EC2
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#
+#
+#jobs:
+#  Deploy:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: connect EC2 with SSH
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_PRIVATE_KEY }}
+#          script_stop: true
+#          script: |
+#            cd /home/ubuntu/Spring-Back
+#            git pull origin main
+#            chmod +x gradlew # gradlew 파일에 실행 권한 부여
+#            ./gradlew clean build
+#            # 서버가 꺼져있어도 실행시키기 위한 명령어
+#            sudo fuser k- kn tcp 8080 || true
+#            # 시행 결과 로그를 표준 출력으로 남기기
+#            nohup java -jar build/libs/*SNAPSHOT.jar  > ./output.log 2>&1 &
+#
+#
