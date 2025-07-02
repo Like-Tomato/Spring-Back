@@ -7,13 +7,23 @@ import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
 import com.like_lion.tomato.domain.recruitment.dto.applicant.ApplicantResponse;
+import com.like_lion.tomato.domain.recruitment.dto.applicant.StatusResponse;
+import com.like_lion.tomato.domain.recruitment.entity.application.Application;
+import com.like_lion.tomato.domain.recruitment.entity.constant.ApplicationStatus;
+import com.like_lion.tomato.domain.recruitment.exception.RecruitmentErrorCode;
+import com.like_lion.tomato.domain.recruitment.exception.RecruitmentException;
 import com.like_lion.tomato.domain.recruitment.repository.application.ApplicationRepository;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.common.enums.Part;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.like_lion.tomato.domain.recruitment.dto.applicant.ApplicantResponse.*;
+import static com.like_lion.tomato.domain.recruitment.entity.constant.ApplicationStatus.FIRST_PASS;
+import static com.like_lion.tomato.domain.recruitment.entity.constant.ApplicationStatus.SUBMITTED;
 
 @Service
 @RequiredArgsConstructor
@@ -22,25 +32,56 @@ public class ApplicantService {
     private final ApplicationRepository applicationRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public List<ApplicantResponse> getApplicants(Part part, String authorization) {
-        String memberId = jwtTokenProvider.extractMemberIdFromToken(authorization);
+    public Detail getApplicantDetail(String applicationId, String authorization) {
+        String reviewerId = jwtTokenProvider.extractMemberIdFromToken(authorization);
 
-        Member member = memberRepository.findById(memberId)
+        Member reviewer = memberRepository.findById(reviewerId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        if (!member.hasAdminRoleOrHigher()) {
+        if (!reviewer.hasAdminRoleOrHigher()) {
             throw new AuthException((AuthErrorCode.ADMIN_REQUIRED));
         }
 
-        if (part == null) {
-            return applicationRepository.findAllBySubmittedIsNotNull().stream()
-                    .map(application -> ApplicantResponse.from(application, member.getId()))
-                    .toList();
-        } else {
-            return applicationRepository.findAllBySubmittedIsNotNullAndPart((part))
-                    .stream()
-                    .map(application -> ApplicantResponse.fromPart(application, part, member.getId()))
-                    .toList();
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RecruitmentException(RecruitmentErrorCode.APPLICATION_NOT_FOUND));
+
+        return Detail.from(application, reviewer.getId());
+    }
+
+    public StatusResponse getApplicants(Part part, @NotNull Integer round, String authorization) {
+        String reviewerId = jwtTokenProvider.extractMemberIdFromToken(authorization);
+
+        Member reviewer = memberRepository.findById(reviewerId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        if (!reviewer.hasAdminRoleOrHigher()) {
+            throw new AuthException((AuthErrorCode.ADMIN_REQUIRED));
         }
+        ApplicationStatus status = getStatusByRound(round);
+        List<Application> applications = getApplications(status, part);
+
+        List<ApplicantResponse> applicantsInfo = applications.stream()
+                .map(application -> from(application, reviewer.getId()))
+                .toList();
+
+        if (part == null) {
+            return new StatusResponse(round, "ALL", applicantsInfo);
+        } else {
+            return new StatusResponse(round, part.toString(), applicantsInfo);
+        }
+    }
+
+    private ApplicationStatus getStatusByRound(int round) {
+        return switch (round) {
+            case 1 -> SUBMITTED;
+            case 2 -> FIRST_PASS;
+            default -> throw new RecruitmentException(RecruitmentErrorCode.INVALID_ROUND);
+        };
+    }
+
+    private List<Application> getApplications(ApplicationStatus status, Part part) {
+        return (part == null)
+                ? applicationRepository.findAllByStatus(status)
+                : applicationRepository.findAllByStatusAndPart(status, part);
     }
 }
