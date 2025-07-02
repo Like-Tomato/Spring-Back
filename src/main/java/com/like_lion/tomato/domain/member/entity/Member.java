@@ -108,9 +108,15 @@ public class Member {
         // 필요하다면 email, phone 등 추가 필드도 여기에 업데이트
     }
 
+    // 관리자가 멤버 수정 가능하도록
     public void updatePart(Part part) {
         this.part = part;
     }
+
+    public void updateRole(Role role) {
+        this.role = role;
+    }
+
 
 
     /**

@@ -27,6 +27,7 @@ public enum MemberErrorCode implements ErrorCode {
     INVALID_PHONE_FORMAT(400, "올바른 전화번호 형식이 아닙니다."),
     INVALID_STUDENT_ID_FORMAT(400, "올바른 학번 형식이 아닙니다."),
     INVALID_EMAIL_FORMAT(400, "올바른 이메일 형식이 아닙니다."),
+    INVALID_ROLE(400, "올바른 권한이 아닙니다"),
     // 조회 및 기타
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     MEMBER_NOT_FOUND(404, "멤버를 찾을 수 없습니다."),

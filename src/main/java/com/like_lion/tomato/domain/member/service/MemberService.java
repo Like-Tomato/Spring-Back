@@ -16,6 +16,7 @@ import com.like_lion.tomato.domain.session.entity.session.Session;
 import com.like_lion.tomato.domain.session.repository.AssignmentSubmissionRepository;
 import com.like_lion.tomato.domain.session.repository.SessionRepository;
 import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
+import com.like_lion.tomato.global.auth.model.Role;
 import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
@@ -147,6 +148,16 @@ public class MemberService {
         if (!Part.isValid(part)) throw new MemberException(MemberErrorCode.INVALID_PART);
 
         member.updatePart(Part.valueOf(part.toUpperCase()));
+        memberWriter.save(member);
+    }
+
+    @Transactional
+    public void updateMemberRole(String memberId, String role) {
+        Member member = memberReader.findOptionById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
+        if (!Role.isValid(role)) throw new MemberException(MemberErrorCode.INVALID_ROLE);
+
+        member.updateRole(Role.valueOf(role.toUpperCase()));
         memberWriter.save(member);
     }
 }
