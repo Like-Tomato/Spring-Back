@@ -1,5 +1,5 @@
 // PresignedUrlReq.java
-package com.like_lion.tomato.infra.s3.dto;
+package com.like_lion.tomato.infra.s3.dto.request;
 
 import com.like_lion.tomato.global.common.enums.MimeType;
 import jakarta.validation.constraints.NotNull;

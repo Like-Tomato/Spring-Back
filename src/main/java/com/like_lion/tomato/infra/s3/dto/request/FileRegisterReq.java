@@ -1,4 +1,4 @@
-package com.like_lion.tomato.infra.s3.dto;
+package com.like_lion.tomato.infra.s3.dto.request;
 
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.session.entity.session.Session;

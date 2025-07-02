@@ -7,7 +7,7 @@ import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.global.util.HttpHeaderUtil;
-import com.like_lion.tomato.infra.s3.dto.FileRegisterReq;
+import com.like_lion.tomato.infra.s3.dto.request.FileRegisterReq;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

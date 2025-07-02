@@ -1,45 +1,51 @@
 package com.like_lion.tomato.domain.session.dto.response;
 
-import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.domain.session.entity.session.Session;
+import com.like_lion.tomato.infra.s3.dto.response.PresignedUrlRes;
+import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 public class SessionDetailRes {
-    private String id;
-    private int year;
-    private String part;
-    private String title;
-    private LocalDateTime createdAt;
-    private LocalDateTime endedAt;
-    private String sessionUrl;
+    private final String id;
+    private final int year;
+    private final String part;
+    private final String title;
+    private final String assignmentDescription;
+    private final String assignmentLinks; // "link1, link2, ..." 형태의 문자열
+    private final String createdAt;
+    private final String endedAt;
+    private final PresignedUrlRes presignedUrlRes;
 
-    public SessionDetailRes(String id, int year, String part, String title,
-                            LocalDateTime createdAt, LocalDateTime endedAt,
-                            String sessionUrl, AssignmentSubmissionRes assignment) {
+    @Builder
+    private SessionDetailRes(String id, int year, String part, String title,
+                             String assignmentDescription, String assignmentLinks,
+                             String createdAt, String endedAt, PresignedUrlRes presignedUrlRes) {
         this.id = id;
         this.year = year;
         this.part = part;
         this.title = title;
+        this.assignmentDescription = assignmentDescription;
+        this.assignmentLinks = assignmentLinks;
         this.createdAt = createdAt;
         this.endedAt = endedAt;
-        this.sessionUrl = sessionUrl;
-        this.assignment = assignment;
+        this.presignedUrlRes = presignedUrlRes;
     }
 
-
-    public static SessionDetailRes of(Session session, AssignmentSubmission submission) {
-        return new SessionDetailRes(
-                session.getId(),
-                session.getGeneration().getYear(),
-                session.getPart().name(),
-                session.getTitle(),
-                session.getEndedAt(),
-                session.getSessionUrl(), // 없으면 null
-                submission != null ? AssignmentSubmissionRes.from(submission) : null
-        );
+    /**
+     * Session 엔티티와 PresignedUrlRes를 받아서 DTO로 변환
+     */
+    public static SessionDetailRes from(Session session, PresignedUrlRes presignedUrlRes) {
+        return SessionDetailRes.builder()
+                .id(session.getId())
+                .year(session.getGeneration().getYear())
+                .part(session.getPart().name())
+                .title(session.getTitle())
+                .assignmentDescription(session.getAssignmentDdescription())
+                .assignmentLinks(session.getAssignmentLinks()) // 반드시 "link1,link2,..." 형태의 문자열
+                .createdAt(session.getCreatedAt().toString())
+                .endedAt(session.getEndedAt().toString())
+                .presignedUrlRes(presignedUrlRes)
+                .build();
     }
 }
-
