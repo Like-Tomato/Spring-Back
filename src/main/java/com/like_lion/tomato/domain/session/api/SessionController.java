@@ -10,6 +10,8 @@ import com.like_lion.tomato.global.auth.implement.JwtTokenProvider;
 import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.global.util.HttpHeaderUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,11 @@ public class SessionController {
      * @param part (optional) 파트명 (예: BACKEND, FRONTEND, DESIGN)
      * @return 세션 목록 (최신순)
      */
+    @Operation(
+            summary = "세션 전체/파트별 목록 조회",
+            description = "파트명(예: BACKEND, FRONTEND, DESIGN)과 주차(week)별로 세션 목록을 최신순으로 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping
     @PreAuthorize("hasRole('MEMBER')")
     public ApiResponse<SessionListRes> readAllByFilter(
@@ -44,6 +51,11 @@ public class SessionController {
      * @param request HttpServletRequest (헤더에서 토큰 추출용)
      * @return 세션 상세 정보 + 해당 멤버의 과제 제출 내역 등
      */
+    @Operation(
+            summary = "세션 상세/제출파일 상세정보 조회",
+            description = "세션 ID로 세션 상세정보와 해당 멤버의 과제 제출 내역을 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping("/{sessionId}")
     @PreAuthorize("hasRole('MEMBER')")
     public ApiResponse<SessionDetailRes> readSessionWithAssignment(
@@ -66,6 +78,11 @@ public class SessionController {
      * @param req 파일 등록 요청 DTO(fileKey, name, mimeType, size)
      * @param request HttpServletRequest (accessToken에서 memberId 추출)
      */
+    @Operation(
+            summary = "세션 자료(파일) 등록 (ADMIN)",
+            description = "ADMIN 권한으로 세션 자료(파일)를 등록합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PostMapping("/{sessionId}/file/assignment")
     public ApiResponse<ApiResponse.MessageData> create(
             @PathVariable String sessionId,
@@ -78,7 +95,11 @@ public class SessionController {
         sessionService.create(sessionId, memberId, req);
         return ApiResponse.success("세션 파일 등록 성공");
     }
-
+    @Operation(
+            summary = "과제 제출",
+            description = "멤버가 해당 세션의 과제 링크를 제출합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PostMapping("/assignment/{sessionId}/submission")
     @PreAuthorize("hasRole('MEMBER')")
     public ApiResponse<ApiResponse.MessageData> submitAssignmentLinks(
