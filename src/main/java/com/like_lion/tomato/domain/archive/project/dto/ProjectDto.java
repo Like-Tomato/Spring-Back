@@ -6,9 +6,13 @@ import com.like_lion.tomato.domain.archive.exception.ArchiveErrorCode;
 import com.like_lion.tomato.domain.archive.exception.ArchiveException;
 import com.like_lion.tomato.domain.archive.project.entity.constant.Platform;
 import com.like_lion.tomato.domain.archive.project.entity.constant.ProjectCategory;
+import com.like_lion.tomato.domain.archive.project.exception.ProjectErrorCode;
+import com.like_lion.tomato.domain.archive.project.exception.ProjectException;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public record ProjectDto(
 ) {

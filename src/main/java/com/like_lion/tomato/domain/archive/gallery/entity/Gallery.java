@@ -2,6 +2,7 @@ package com.like_lion.tomato.domain.archive.gallery.entity;
 
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
@@ -9,12 +10,15 @@ import lombok.Getter;
 
 @Getter
 @Entity
-public class Gallery {
+public class Gallery extends BaseEntity {
 
     @DomainId(DomainType.GALLERY)
     @Id
     @Column(name = "gallery_id")
     private String id;
+
+    @Enumerated(EnumType.STRING)
+    GalleryType category;
 
     @Column(length = 50)
     private String title;
@@ -22,7 +26,8 @@ public class Gallery {
     @Column(length = 200)
     private String description;
 
-    private String thumbnailUrl;
+    @Column
+    private String thumbnailFileKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -31,4 +36,5 @@ public class Gallery {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generation_id")
     private Generation generation;
+
 }
