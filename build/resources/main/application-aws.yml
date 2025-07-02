@@ -1,0 +1,12 @@
+cloud:
+  aws:
+    credentials:
+      access-key: ${CLOUD_AWS_CREDENTIALS_ACCESS_KEY}
+      secret-key: ${CLOUD_AWS_CREDENTIALS_SECRET_KEY}
+    region: ${CLOUD_AWS_REGION}
+  s3:
+    bucket: ${CLOUD_S3_BUCKET}
+    upload:
+      expTime: 900000     # 15분(밀리초)
+    download:
+      expTime: 900000
