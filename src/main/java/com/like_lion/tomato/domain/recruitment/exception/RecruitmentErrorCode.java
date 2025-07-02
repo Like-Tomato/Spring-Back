@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum RecruitmentErrorCode implements ErrorCode {
     // 잘못된 요청 오류
+    INVALID_ROUND(400, "올바른 라운드 범위가 아닙니다 (1 또는 2)"),
     INVALID_NAME_FORMAT(400, "올바른 이름 형식이 아닙니다"),
     INVALID_PHONE_FORMAT(400, "올바른 전화번호 형식이 아닙니다"),
     INVALID_STUDENT_ID_FORMAT(400, "올바른 학번 형식이 아닙니다"),
