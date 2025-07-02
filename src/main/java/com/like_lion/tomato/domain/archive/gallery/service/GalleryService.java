@@ -10,8 +10,6 @@ import com.like_lion.tomato.domain.archive.gallery.repository.GalleryRepository;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
-import com.like_lion.tomato.global.common.enums.Part;
-import com.like_lion.tomato.infra.s3.dto.response.PresignedUrlRes;
 import com.like_lion.tomato.infra.s3.service.S3PresignedService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
