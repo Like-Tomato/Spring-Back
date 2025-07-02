@@ -39,7 +39,7 @@ public class S3PresignedService {
      * @return PresignedUrlRes (업로드용 presigned URL, S3에 저장될 파일 key)
      */
     public PresignedUrlRes getPresignedUrlForPut(PresignedUrlReq request) {
-        String fileKey = createKey(request.prefix(), request.fileName());
+        String fileKey = request.fileKey();
         GeneratePresignedUrlRequest presignedRequest = getGeneratePresignedUrlRequest(bucket, fileKey, HttpMethod.PUT);
         URL url = amazonS3.generatePresignedUrl(presignedRequest);
         return PresignedUrlRes.of(url.toString(), fileKey);
@@ -79,15 +79,17 @@ public class S3PresignedService {
 
     /**
      * S3에 저장할 파일 key(경로+파일명)를 생성한다.
-     * key는 prefix/타임스탬프-UUID-파일명 형식으로 구성된다.
+     * key는 prefix/UUID/파일명 형식으로 구성된다.
      *
      * @param prefix   S3 폴더 경로(예: "session/123")
      * @param fileName 원본 파일명
      * @return S3에 저장할 유니크한 파일 key
      */
+    /**
     private String createKey(String prefix, String fileName) {
         String fileUniqueId = UUID.randomUUID().toString();
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return String.format("%s/%s-%s-%s", prefix, timestamp, fileUniqueId, fileName);
+        return String.format("%s/%s/%s", prefix, timestamp, fileUniqueId, fileName);
     }
+     **/
 }

@@ -42,7 +42,6 @@ public class SessionDetailRes {
                 .part(session.getPart().name())
                 .title(session.getTitle())
                 .assignmentDescription(session.getAssignmentDdescription())
-                .assignmentLinks(session.getAssignmentLinks()) // 반드시 "link1,link2,..." 형태의 문자열
                 .createdAt(session.getCreatedAt().toString())
                 .endedAt(session.getEndedAt().toString())
                 .presignedUrlRes(presignedUrlRes)

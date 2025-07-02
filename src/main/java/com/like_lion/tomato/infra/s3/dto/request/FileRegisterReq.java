@@ -1,3 +1,4 @@
+/*
 package com.like_lion.tomato.infra.s3.dto.request;
 
 import com.like_lion.tomato.domain.member.entity.Member;
@@ -11,13 +12,15 @@ public record FileRegisterReq(
         @NotNull String fileKey,
         @NotNull String mimeType
 ) {
-    /**
+    */
+/**
      * FileRegisterReq → SessionFIle 변환
      * @param session 세션 엔티티
      * @param member  업로더(관리자) 엔티티
      * fileKey -> prefix S3 prefix (예: "session/1234")
      * @return SessionFIle 엔티티
-     */
+     *//*
+
     public SessionFIle toSessionFIle(Session session, Member member) {
         return SessionFIle.builder()
                 .session(session)
@@ -32,4 +35,4 @@ public record FileRegisterReq(
         int idx = fileKey.lastIndexOf('/');
         return idx > 0 ? fileKey.substring(0, idx) : "";
     }
-}
+}*/
