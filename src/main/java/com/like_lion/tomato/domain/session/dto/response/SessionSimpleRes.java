@@ -28,9 +28,8 @@ public class SessionSimpleRes {
                 .id(session.getId())
                 .week(session.getWeek())
                 .title(session.getTitle())
-                .startedAt(session.getStartedAt().toString())
+                .startedAt(session.getCreatedAt().toString())
                 .endedAt(session.getEndedAt().toString())
-                .status(session.getStatus().name())
                 .build();
     }
 }

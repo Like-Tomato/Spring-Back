@@ -2,20 +2,24 @@ package com.like_lion.tomato.domain.session.entity.session;
 
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.global.common.BaseEntity;
+import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
+import com.like_lion.tomato.global.common.BaseEntitiy;
+import com.like_lion.tomato.global.common.enums.Part;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Session extends BaseEntity {
+public class Session extends BaseEntitiy {
 
     @DomainId(DomainType.SESSION)
     @Id
@@ -25,15 +29,18 @@ public class Session extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String title;
 
-    @Column(nullable = false, length = 100)
-    private String description;
-
     @Column(nullable = false)
     private int week;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Status status = Status.NOT_EXIST;
+    @Column(nullable = false, length = 20)
+    private Part part;
+
+    @Column(nullable = false, length = 100)
+    private String assignmentDdescription;
+
+    @Column(nullable = false)
+    private LocalDateTime endedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -43,34 +50,18 @@ public class Session extends BaseEntity {
     @JoinColumn(name = "generation_id")
     private Generation generation;
 
-    // 추가: 세션 시작/종료 시간
-    @Column(nullable = false)
-    private LocalDateTime startedAt;
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AssignmentSubmission> assignmentSubmissions = new ArrayList<>();
 
-    @Column(nullable = false)
-    private LocalDateTime endedAt;
-
-    // 추가: 파트(백엔드/프론트/디자인 등)
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Part part;
-
-    // Status Enum은 명세에 맞게 정의!
-    public enum Status {
-        ASSIGNED, ONGOING, COMPLETED, NOT_EXIST, NOT_COMPLETED
+    // 연관관계 편의 메서드
+    public void addAssignmentSubmission(AssignmentSubmission submission) {
+        assignmentSubmissions.add(submission);
+        submission.setSession(this);
     }
 
-    // Part Enum도 명세에 맞게 정의!
-    public enum Part {
-        BACKEND, FRONTEND, DESIGN;
-
-        public static boolean isValid(String part) {
-            try {
-                Part.valueOf(part.toUpperCase());
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        }
+    public void removeAssignmentSubmission(AssignmentSubmission submission) {
+        assignmentSubmissions.remove(submission);
+        submission.setSession(null);
     }
+
 }
