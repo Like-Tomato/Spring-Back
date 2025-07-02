@@ -1,12 +1,15 @@
 package com.like_lion.tomato.domain.archive.gallery.controller;
 
 import com.like_lion.tomato.domain.archive.gallery.dto.GalleryListRes;
+import com.like_lion.tomato.domain.archive.gallery.dto.GalleryPostReq;
 import com.like_lion.tomato.domain.archive.gallery.service.GalleryService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -42,5 +45,17 @@ public class GalleryController {
             @RequestParam(required = false) Integer year
     ) {
         return ApiResponse.success(galleryService.readAllGallery(page, size, category, year));
+    }
+
+    @Operation(
+            summary = "갤러리 게시물 등록",
+            description = "ADMIN 권한으로 갤러리 게시물을 등록합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/gallery")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<ApiResponse.MessageData> createGallery(@RequestBody GalleryPostReq req) {
+        galleryService.createGallery(req);
+        return ApiResponse.success(new ApiResponse.MessageData("갤러리 게시물이 성공적으로 등록되었습니다."));
     }
 }
