@@ -30,14 +30,7 @@ public class QuestionService {
     private final RecruitmentPartQuestionRepository partQuestionRepository;
     private final MemberService memberService;
 
-    public QuestionResponse uploadQuestions(Part part, QuestionUploadRequest request, String authorization) {
-
-        Member uploader = memberService.extractMemberFromToken(authorization);
-
-        if (!uploader.hasAdminRoleOrHigher()) {
-            throw new AuthException((AuthErrorCode.ADMIN_REQUIRED));
-        }
-
+    public QuestionResponse uploadQuestions(Part part, QuestionUploadRequest request) {
         List<QuestionInfo.Detail> questionResponses;
 
         if (part == null) {
@@ -110,12 +103,7 @@ public class QuestionService {
         return new QuestionInfo(commonQuestions, partQuestions);
     }
 
-    public QuestionResponse updateQuestions(Part part, QuestionUpdateRequest request, String authorization) {
-        Member uploader = memberService.extractMemberFromToken(authorization);
-
-        if (uploader.hasAdminRoleOrHigher()) {
-            throw new AuthException(AuthErrorCode.ADMIN_REQUIRED);
-        }
+    public QuestionResponse updateQuestions(Part part, QuestionUpdateRequest request) {
         List<QuestionInfo.Detail> questionResponses;
 
         if (part == null) {

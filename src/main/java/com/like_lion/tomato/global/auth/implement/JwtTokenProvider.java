@@ -9,7 +9,9 @@ import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,7 @@ import java.util.Optional;
 
 @Getter
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     public static final String BEARER_PREFIX = "Bearer ";
@@ -34,10 +37,29 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh-token-expiration}")
     private Long refreshTokenExpiration;
 
-    private final SecretKey secretKey;
-    private final JwtParser jwtParser;
+    @Value("${jwt.secret}")
+    private String rawSecretKey;  // 💡 문자열 형태로 먼저 주입
+
+    private SecretKey secretKey;
+    private JwtParser jwtParser;
+
+    @PostConstruct
+    public void init() {
+        log.info("✅ jwt.secret: {}", rawSecretKey);  // 여기선 무조건 찍힘
+
+        this.secretKey = new SecretKeySpec(
+                rawSecretKey.getBytes(StandardCharsets.UTF_8),
+                Jwts.SIG.HS256.key().build().getAlgorithm()
+        );
+
+        this.jwtParser = Jwts.parser()
+                .verifyWith(this.secretKey)
+                .build();
+    }
+
 
     public JwtTokenProvider(@Value("${jwt.secret}")String secretKey) {
+        log.info("✅ 시크릿키 : {}", secretKey);
         this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
         this.jwtParser = Jwts.parser()
                 .verifyWith(this.secretKey)
@@ -67,7 +89,8 @@ public class JwtTokenProvider {
                 .claim("role", likeLionOAuth2User.getRole())
                 .claim("profileImage", likeLionOAuth2User.getProfileImage())
                 .claim("provider", likeLionOAuth2User.getProvider())
-                .issuedAt(new Date(now.getTime() + accessTokenExpiration))
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + accessTokenExpiration))
                 .signWith(secretKey)
                 .compact();
     }
@@ -100,6 +123,7 @@ public class JwtTokenProvider {
         return Optional.ofNullable(authorization)
                 .filter(auth -> auth.startsWith("Bearer "))
                 .map(auth -> auth.substring(7))
+                .map(this::getId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.INVALID_ACCESS_TOKEN));
     }
 
@@ -121,7 +145,7 @@ public class JwtTokenProvider {
     }
 
     public String getId(String token) {
-        return getPayload(token).get("username", String.class);
+        return getPayload(token).get("id", String.class);
     }
 
     public String getUsername(String token) {
