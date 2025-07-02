@@ -4,10 +4,8 @@ spring:
       client:
         registration:
           google:
-            client-name: google
-            client-id: 49284976932-3ndrrj3stncc1iqklemtro3efcmmoalo.apps.googleusercontent.com
-            client-secret: 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
-            authorization-grant-type: authorization_code
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             redirect-uri: http://localhost:8080/login/oauth2/code/google
             scope:
               - profile
