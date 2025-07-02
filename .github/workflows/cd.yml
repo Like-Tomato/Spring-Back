@@ -3,7 +3,7 @@ name: CD - Production
 on:
   push:
     branches:
-      - 'dev'
+      - 'reset-main'
 
 jobs:
   deploy:
