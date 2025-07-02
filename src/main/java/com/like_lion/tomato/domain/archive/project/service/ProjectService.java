@@ -14,6 +14,7 @@ import com.like_lion.tomato.domain.member.exception.GenerationException;
 import com.like_lion.tomato.domain.member.repository.GenerationRepository;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
 import com.like_lion.tomato.domain.member.service.MemberService;
+import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.infra.s3.service.S3PresignedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class ProjectService {
     private final MemberRepository memberRepository;
     private final GenerationRepository generationRepository;
     private final S3PresignedService preSignedService;
+    private final S3PresignedService s3PresignedService;
 
     public Response uploadProject(UploadRequest request, String authorization) {
 
@@ -99,5 +101,20 @@ public class ProjectService {
                 .setOrder(1)
                 .project(project)
                 .build();
+    }
+
+    public ApiResponse.MessageData deleteProject(String projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorCode.PROJECT_NOT_FOUND));
+
+        List<ProjectImage> projectImages = projectImageRepository.findByProjectIdOrderBySetOrderAsc(projectId);
+
+        projectRepository.delete(project);
+
+        s3PresignedService.deleteFiles(projectImages.stream()
+            .map(ProjectImage::getFileKey)
+            .toList());
+
+        return new ApiResponse.MessageData("프로젝트 게시물이 삭제되었습니다.");
     }
 }
