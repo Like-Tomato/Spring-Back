@@ -37,7 +37,8 @@ public class Member {
     @Column(nullable = false)
     private String provider;
 
-    private String profileUrl;
+    @Column(nullable = false)
+    private String fileKey;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -113,12 +114,12 @@ public class Member {
     }
 
     @Builder
-    public Member(String username, String email, String providerId, String major, String introduce, String links, String provider, String profileUrl, Role role, Part part, boolean isApplied, boolean isSubscribed) {
+    public Member(String username, String email, String providerId, String major, String introduce, String links, String provider, String fileKey, Role role, Part part, boolean isApplied, boolean isSubscribed) {
         this.username = username;
         this.email = email;
         this.providerId = providerId;
         this.provider = provider;
-        this.profileUrl = profileUrl;
+        this.fileKey = fileKey;
         this.role = role;
         this.part = part;
         this.introduce = introduce;

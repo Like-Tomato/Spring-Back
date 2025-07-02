@@ -15,6 +15,7 @@ import com.like_lion.tomato.domain.member.exception.MemberErrorCode;
 import com.like_lion.tomato.domain.member.exception.MemberException;
 import com.like_lion.tomato.domain.member.implement.MemberReader;
 import com.like_lion.tomato.domain.member.implement.MemberWriter;
+import com.like_lion.tomato.infra.s3.service.S3PresignedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +31,7 @@ public class MemberService {
     private final MemberWriter memberWriter;
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    // private final FileUploadService fileUploadService; 의존성 추가 후 구현!
+    private final S3PresignedService s3PresignedService;
 
 
     @Transactional
@@ -68,7 +69,7 @@ public class MemberService {
                 .orElseThrow(
                         () -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND)
                 );
-        return MemberProfileRes.from(member);
+        return MemberProfileRes.from(member, s3PresignedService.getPresignedUrlForGet(member.getFileKey()));
     }
 
     @Transactional
