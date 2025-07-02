@@ -28,6 +28,12 @@ public record ApplicantResponse(
         );
     }
 
+    public record Simple(
+            String id,
+            String name
+    ) {
+    }
+
     @Builder
     public record Detail(
             String id,
