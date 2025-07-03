@@ -19,7 +19,8 @@ public record ApplicationResponse(
         List<QuestionAnswerDto> commonAnswers,
         List<QuestionAnswerDto> partAnswers,
         String accessToken,
-        LocalDateTime submittedAt
+        LocalDateTime createdAt,
+        boolean isSubmitted
 ) {
     public static ApplicationResponse from(
             Application application, String accessToken
@@ -40,7 +41,8 @@ public record ApplicationResponse(
                         .map(QuestionAnswerDto::fromPart)
                         .toList(),
                 accessToken,
-                application.getSubmittedAt()
+                application.getCreatedAt(),
+                application.isSubmitted()
         );
     }
 
