@@ -31,7 +31,7 @@ public class S3PresignedService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.upload.expTime}")
+    @Value("${cloud.aws.s3.upload.expTime}")
     private Long uploadExpTime;
 
     @Value("${cloud.aws.s3.download.expTime}")

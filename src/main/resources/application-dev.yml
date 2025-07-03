@@ -60,12 +60,12 @@ cloud:
       access-key: ${AWS_ACCESS_KEY:dummy-access-key}
       secret-key: ${AWS_SECRET_KEY:dummy-secret-key}
     region: ${AWS_REGION:ap-northeast-2}  # 서울 리전
-  s3:
-    bucket: ${AWS_S3_BUCKET:likilion-bucket}
-    download:
-      expTime: 3600  # 1시간 (초 단위)
-    upload:
-      expTime: 3600    # 1시간 (초 단위)
+    s3:
+      bucket: ${AWS_S3_BUCKET:likilion-bucket}
+      download:
+        expTime: 3600  # 1시간 (초 단위)
+      upload:
+        expTime: 3600    # 1시간 (초 단위)
 
 client:
   url: ${CLIENT_URL:http://localhost:3000}
