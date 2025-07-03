@@ -70,12 +70,10 @@ public record ProjectDto(
                 String part = parts[0];
                 String name = parts[1];
 
-                // 파트 검증
                 if (!isValidPart(part)) {
                     throw new ProjectException(ProjectErrorCode.INVALID_PART);
                 }
 
-                // 이름 빈 값 검증
                 if (name.trim().isEmpty()) {
                     throw new ProjectException(ProjectErrorCode.INVALID_MEMBER_NAME);
                 }

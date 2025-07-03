@@ -30,6 +30,9 @@ public class RecruitmentPartQuestion extends BaseEntity {
     @Column(name = "part", nullable = false, length = 10)
     private Part part;
 
+    @Column
+    private Integer answerLimit;
+
     public void updateQuestionText(String questionText) {
         this.questionText = questionText;
     }

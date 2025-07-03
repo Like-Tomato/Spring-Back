@@ -3,6 +3,7 @@ package com.like_lion.tomato.domain.recruitment.entity.common;
 import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
+import com.like_lion.tomato.global.id.IdGeneratorListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,9 @@ public class RecruitmentCommonQuestion extends BaseEntity {
 
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
+
+    @Column
+    private Integer answerLimit;
 
     public void updateQuestionText(String questionText) {
         this.questionText = questionText;

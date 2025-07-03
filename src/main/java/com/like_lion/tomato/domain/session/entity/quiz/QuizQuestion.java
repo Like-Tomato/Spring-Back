@@ -24,8 +24,7 @@ public class QuizQuestion extends BaseEntity {
     @JoinColumn(name = "session_quiz")
     private SessionQuiz sessionQuiz;
 
-    public void setSessionQuiz(SessionQuiz quizQuestion) {
+    public void updateSessionQuiz(SessionQuiz sessionQuiz) {
         this.sessionQuiz = sessionQuiz;
     }
-
 }

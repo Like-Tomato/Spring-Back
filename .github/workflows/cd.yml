@@ -42,7 +42,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          port: ${{ secrets.DEPLOY_EC2_SSH_PORT }}
           script: |
             echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login -u ${{ secrets.DOCKERHUB_ID }} --password-stdin
             sudo docker pull ${{ secrets.DOCKERHUB_ID }}/like-tomato

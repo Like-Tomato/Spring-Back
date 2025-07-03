@@ -26,9 +26,10 @@ public class SessionQuiz extends BaseEntity {
     @OneToMany(mappedBy = "sessionQuiz")
     private List<QuizQuestion> quizQuestions;
 
+
     public void addQuizQuestion(QuizQuestion quizQuestion) {
         quizQuestions.add(quizQuestion);
-        quizQuestion.setSessionQuiz(this);
+        quizQuestion.updateSessionQuiz(this);
     }
 
     public int getTotalCount() {

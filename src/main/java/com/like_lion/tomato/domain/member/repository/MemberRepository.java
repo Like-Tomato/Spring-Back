@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.member.repository;
 
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.global.auth.model.Role;
 import com.like_lion.tomato.global.common.enums.Part;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,9 +9,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, String> {
 
     Optional<Member> findByEmail(String email);
     Optional<Member> findById(String id);
@@ -36,9 +38,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findAllByPartAndYearAndRoleIn(
             @Param("part") Part part,
             @Param("year") Integer year,
+            @Param("roles") List<Role> roles,
             Pageable pageable
     );
-
 
     boolean existsByUsername(String username);
 }

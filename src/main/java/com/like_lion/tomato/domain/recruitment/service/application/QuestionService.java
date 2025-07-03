@@ -28,7 +28,6 @@ import static com.like_lion.tomato.domain.recruitment.dto.question.QuestionInfo.
 public class QuestionService {
     private final RecruitmentCommonQuestionRepository commonQuestionRepository;
     private final RecruitmentPartQuestionRepository partQuestionRepository;
-    private final MemberService memberService;
 
     public QuestionResponse uploadQuestions(Part part, QuestionUploadRequest request) {
         List<QuestionInfo.Detail> questionResponses;
@@ -51,6 +50,7 @@ public class QuestionService {
                 .map(request -> RecruitmentCommonQuestion.builder()
                         .questionText(request.questionText())
                         .sortOrder(request.orderIndex())
+                        .answerLimit(request.answerLimit())
                         .build())
                 .toList();
 
@@ -60,8 +60,8 @@ public class QuestionService {
                 .map(question -> new QuestionInfo.Detail(
                         question.getId(),
                         question.getQuestionText(),
-                        true,
                         question.getSortOrder(),
+                        question.getAnswerLimit(),
                         question.getCreatedAt()
                 ))
                 .toList();
@@ -73,6 +73,7 @@ public class QuestionService {
                         .part(part)
                         .questionText(request.questionText())
                         .sortOrder(request.orderIndex())
+                        .answerLimit(request.answerLimit())
                         .build())
                 .toList();
 
@@ -82,8 +83,8 @@ public class QuestionService {
                 .map(question -> new QuestionInfo.Detail(
                         question.getId(),
                         question.getQuestionText(),
-                        true,
                         question.getSortOrder(),
+                        question.getAnswerLimit(),
                         question.getCreatedAt()
                 ))
                 .toList();
@@ -128,7 +129,7 @@ public class QuestionService {
                 .map(question -> new QuestionInfo.Detail(
                         question.getId(),
                         question.getQuestionText(),
-                        true,
+                        question.getAnswerLimit(),
                         question.getSortOrder(),
                         question.getCreatedAt()
                 ))
@@ -144,8 +145,8 @@ public class QuestionService {
                 .map(question -> new QuestionInfo.Detail(
                         question.getId(),
                         question.getQuestionText(),
-                        true,
                         question.getSortOrder(),
+                        question.getAnswerLimit(),
                         question.getCreatedAt()
                 ))
                 .toList();

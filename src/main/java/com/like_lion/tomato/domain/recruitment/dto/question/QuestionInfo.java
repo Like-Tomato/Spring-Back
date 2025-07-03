@@ -14,8 +14,8 @@ public record QuestionInfo(
     public record Detail(
             String id,
             String questionText,
-            boolean isRequired,
             int orderIndex,
+            int answerLimit,
             LocalDateTime createdAt
     ) {
     }

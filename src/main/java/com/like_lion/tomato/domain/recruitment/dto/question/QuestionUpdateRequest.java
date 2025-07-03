@@ -9,7 +9,7 @@ public record QuestionUpdateRequest(
     public record Detail(
             String questionId,
             String questionText,
-            Boolean isRequired,
-            Integer orderIndex
+            Integer orderIndex,
+            Integer answerLimit
     ) {}
 }

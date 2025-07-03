@@ -21,7 +21,6 @@ public interface SessionRepository extends JpaRepository<Session, String> {
     List<Session> findAllByPartAndWeek(
             @Param("part") Part part,
             @Param("week") Integer week);
-
     // memberId와 sessionId로 Session 조회 (Session 엔티티 기준)
     Optional<Session> findByMember_IdAndId(String memberId, String sessionId);
 

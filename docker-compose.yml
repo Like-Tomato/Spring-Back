@@ -1,7 +1,56 @@
+version: '3.8'
+
 services:
+  app:
+    image: your-dockerhub-id/like-tomato:latest  # 빌드된 이미지 사용
+    container_name: like-tomato-app-prod
+    environment:
+      # 데이터베이스 설정 - 서비스명으로 변경
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      
+      # Spring 프로필
+      SPRING_PROFILES_ACTIVE: prod
+      
+      # JPA 설정
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: false
+      
+      # 서버 설정
+      SERVER_PORT: 8080
+      
+      # 외부 환경변수들
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-dummy-access-key}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY:-dummy-secret-key}
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:3000}
+      
+      TZ: Asia/Seoul
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - app-network
+    env_file:
+      - .env.prod
+
   postgres:
     image: postgres:15-alpine
-    container_name: like-tomato-postgres
+    container_name: like-tomato-postgres-prod
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -11,46 +60,22 @@ services:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - like-tomato-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: like-tomato-api
-    env_file:
-      - .env
-    environment:
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE}
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_ACCESS_EXPIRATION: ${JWT_ACCESS_EXPIRATION}
-      JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
-      TZ: Asia/Seoul
-    ports:
-      - "${APP_PORT:-8080}:8080"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - like-tomato-network
-    volumes:
-      - app_logs:/app/logs
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
+    networks:
+      - app-network
+    env_file:
+      - .env.prod
 
 volumes:
   postgres_data:
-  app_logs:
+    driver: local
 
 networks:
-  like-tomato-network:
+  app-network:
     driver: bridge
