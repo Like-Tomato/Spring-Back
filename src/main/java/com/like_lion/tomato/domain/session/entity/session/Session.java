@@ -37,7 +37,10 @@ public class Session extends BaseEntity {
     private Part part;
 
     @Column(nullable = false, length = 100)
-    private String assignmentDdescription;
+    private String assignmentDescription;
+
+    @Column(nullable = false)
+    private LocalDateTime startedAt;
 
     @Column(nullable = false)
     private LocalDateTime endedAt;
