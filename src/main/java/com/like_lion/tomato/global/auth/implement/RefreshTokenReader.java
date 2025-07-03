@@ -15,10 +15,6 @@ public class RefreshTokenReader {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public Optional<RefreshToken> findOptionalByUserId(String userId) {
-        return refreshTokenRepository.findByUserId(userId);
-    }
-
     public Optional<RefreshToken> findOptionalByUsername(String username) {
         return refreshTokenRepository.findByUsername(username);
     }

@@ -23,7 +23,7 @@ public class SessionQuiz extends BaseEntity {
     @Column(name = "session_quiz")
     private String id;
 
-    @OneToMany(mappedBy = "session_quiz")
+    @OneToMany(mappedBy = "sessionQuiz")
     private List<QuizQuestion> quizQuestions;
 
     public void addQuizQuestion(QuizQuestion quizQuestion) {

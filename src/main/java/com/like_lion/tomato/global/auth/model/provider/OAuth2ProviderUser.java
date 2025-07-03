@@ -31,12 +31,12 @@ public abstract class OAuth2ProviderUser {
         }
     }
 
-    public Member toMember(Role role) {
+    public Member toMember(Role role, String fileKey) {
         return Member.builder()
                 .username(this.getUsername())
                 .email(this.getEmail())
                 .provider(this.getProvider())
-                .profileUrl(this.getProfileUrl())
+                .fileKey(fileKey)
                 .role(role)
                 .build();
     }

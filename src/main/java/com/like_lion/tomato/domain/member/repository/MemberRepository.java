@@ -22,17 +22,17 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
      * 2. 기수가 중복되는 경우, MemberService에서 stream으로 필터링
      */
     @Query("""
-        SELECT DISTINCT m FROM Member m
-        JOIN m.memberGenerations mg
-        JOIN mg.generation g
-        WHERE (:part IS NULL OR g.part = :part)
-        AND (:year IS NULL OR g.year = :year)
-        AND m.role IN (
-            com.like_lion.tomato.global.auth.model.Role.MEMBER,
-            com.like_lion.tomato.global.auth.model.Role.ADMIN,
-            com.like_lion.tomato.global.auth.model.Role.MASTER
-        )
-    """)
+    SELECT DISTINCT m FROM Member m
+    JOIN m.memberGenerations mg
+    JOIN mg.generation g
+    WHERE (:part IS NULL OR g.part = :part)
+      AND (:year IS NULL OR g.year = :year)
+      AND m.role IN (
+          com.like_lion.tomato.global.auth.model.Role.ROLE_MEMBER,
+          com.like_lion.tomato.global.auth.model.Role.ROLE_ADMIN,
+          com.like_lion.tomato.global.auth.model.Role.ROLE_MASTER
+      )
+""")
     Page<Member> findAllByPartAndYearAndRoleIn(
             @Param("part") Part part,
             @Param("year") Integer year,

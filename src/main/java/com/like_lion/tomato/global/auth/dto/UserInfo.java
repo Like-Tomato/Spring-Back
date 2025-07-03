@@ -31,7 +31,6 @@ public class UserInfo {
         return UserInfo.builder()
                 .id(member.getId())
                 .username(member.getUsername())
-                .profileUrl(member.getProfileUrl())
                 .provider(member.getProvider())
                 .build();
     }

@@ -3,13 +3,17 @@ package com.like_lion.tomato.infra.s3.service;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.like_lion.tomato.infra.s3.dto.request.PresignedUrlReq;
 import com.like_lion.tomato.infra.s3.dto.response.PresignedUrlRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,6 +114,37 @@ public class S3PresignedService {
         String fileUniqueId = UUID.randomUUID().toString();
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         return String.format("%s/%s_%s_%s", prefix, timestamp, fileUniqueId, fileName);
+    }
+
+    public String createOauth2UserProfileFileKey(String originalUrl) {
+        String fileName = originalUrl.substring(originalUrl.lastIndexOf('/') + 1);
+        String uuid = java.util.UUID.randomUUID().toString();
+        return "MEMBER/" + uuid + "/" + fileName;
+    }
+
+    public String uploadProfileImageFromUrl(String googleProfileUrl) {
+        String fileKey = createOauth2UserProfileFileKey(googleProfileUrl);
+        try {
+            URL url = new URL(googleProfileUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(10000);
+            connection.setReadTimeout(10000);
+            connection.setRequestMethod("GET");
+
+            try (InputStream inputStream = connection.getInputStream()) {
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(connection.getContentLengthLong());
+                String contentType = connection.getContentType();
+                if (contentType != null) {
+                    metadata.setContentType(contentType);
+                }
+                amazonS3.putObject(new PutObjectRequest(bucket, fileKey, inputStream, metadata));
+            }
+        } catch (Exception e) {
+            // 실패 시 예외처리 (로깅 등)
+            throw new RuntimeException("구글 프로필 이미지를 S3로 업로드 실패", e);
+        }
+        return fileKey;
     }
 
     public void deleteFile(String fileKey) {

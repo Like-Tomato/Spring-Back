@@ -81,9 +81,6 @@ public class Member {
     @Column
     private String studentId;
 
-    @Column
-    private String portfolioUrl;
-
     // 과제 구현 후 양방향 매핑 예정
     // my_page에 과제칸이 존재하므로 즉시조회 예정!
     //@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -151,13 +148,13 @@ public class Member {
     }
 
     public void updateApplicationInfo(String username, String phone, String studentId,
-                                      String major, Part part, String portfolioUrl) {
+                                      String major, Part part, String fileKey) {
         this.username = username;
         this.phone = phone;
         this.studentId = studentId;
         this.major = major;
         this.part = part;
-        this.portfolioUrl = portfolioUrl;
+        this.fileKey = fileKey;
     }
 
     public boolean hasGuestRoleOrHigher() {
