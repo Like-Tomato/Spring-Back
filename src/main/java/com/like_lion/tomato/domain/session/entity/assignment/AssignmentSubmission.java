@@ -6,20 +6,19 @@ import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@Builder
+@AllArgsConstructor
 public class AssignmentSubmission extends BaseEntity {
 
     @DomainId(DomainType.ASSIGNMENT_SUBMISSION)
     @Id
-    @Column(name = "assinment_submission_id")
-    private String assinmentSubmissionId;
+    @Column(name = "assignment_submission_id")
+    private String assignmentSubmissionId;
 
     private String links;
 
@@ -34,12 +33,5 @@ public class AssignmentSubmission extends BaseEntity {
     // 연관관계 편의 메서드
     public void setSession(Session session) {
         this.session = session;
-    }
-
-    @Builder
-    public AssignmentSubmission(Member member, Session session, String links) {
-        this.member = member;
-        this.session = session;
-        this.links = links;
     }
 }

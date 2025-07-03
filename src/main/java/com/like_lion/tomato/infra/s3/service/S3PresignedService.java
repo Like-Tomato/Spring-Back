@@ -24,13 +24,13 @@ import java.util.UUID;
 @Slf4j
 public class S3PresignedService {
 
-    @Value("${cloud.s3.bucket}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.s3.upload.expTime}")
+    @Value("${cloud.aws.upload.expTime}")
     private Long uploadExpTime;
 
-    @Value("${cloud.s3.download.expTime}")
+    @Value("${cloud.aws.s3.download.expTime}")
     private Long downloadExpTime;
 
     private final AmazonS3 amazonS3;

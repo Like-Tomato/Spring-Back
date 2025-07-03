@@ -19,7 +19,7 @@ public class SessionFIle extends BaseEntity {
     @DomainId(DomainType.SESSION_FILE)
     @Id
     @Column(name = "session_file_id")
-    private String sessionId;
+    private String id;
 
     @Column(nullable = false)
     private String name; // 사용자가 업로드한 파일명

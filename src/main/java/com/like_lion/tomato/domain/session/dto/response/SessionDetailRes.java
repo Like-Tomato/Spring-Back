@@ -41,7 +41,7 @@ public class SessionDetailRes {
                 .year(session.getGeneration().getYear())
                 .part(session.getPart().name())
                 .title(session.getTitle())
-                .assignmentDescription(session.getAssignmentDdescription())
+                .assignmentDescription(session.getAssignmentDescription())
                 .createdAt(session.getCreatedAt().toString())
                 .endedAt(session.getEndedAt().toString())
                 .presignedUrlRes(presignedUrlRes)
