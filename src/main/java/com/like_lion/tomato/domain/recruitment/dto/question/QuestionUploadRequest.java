@@ -7,7 +7,7 @@ public record QuestionUploadRequest(
 ) {
     public record Detail(
             String questionText,
-            boolean isRequired,
-            int orderIndex
+            int orderIndex,
+            int answerLimit
     ) {}
 }
