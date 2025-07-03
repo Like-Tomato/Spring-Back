@@ -1,5 +1,6 @@
 package com.like_lion.tomato.domain.archive.project.api;
 
+import com.like_lion.tomato.domain.archive.project.dto.ProjectDetailResponse;
 import com.like_lion.tomato.domain.archive.project.dto.ProjectDto;
 import com.like_lion.tomato.domain.archive.project.dto.ProjectListResponse;
 import com.like_lion.tomato.domain.archive.project.service.ProjectService;
@@ -47,6 +48,12 @@ public class ProjectController {
             @RequestParam(value = "size", defaultValue = "20") int size
     ) {
         ProjectListResponse response = projectService.getProjects(year, category, page, size);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/{projectId}")
+    public ApiResponse<ProjectDetailResponse> getProjectDetail(@PathVariable String projectId) {
+        ProjectDetailResponse response = projectService.getProjectDetail(projectId);
         return ApiResponse.success(response);
     }
 }
