@@ -21,7 +21,9 @@ public enum ProjectErrorCode implements ErrorCode {
     INVALID_URL_FORMAT(400, "유효하지 않은 URL 형식입니다."),
     FILE_TOO_LARGE(400, "파일 크기가 너무 큽니다. (최대 5MB)"),
     INVALID_CATEGORY(400, "유효하지 않은 카테고리입니다."),
-    FILE_UPLOAD_SERVICE_UNAVAILABLE(503, "파일 업로드 서비스를 사용할 수 없습니다.");
+    FILE_UPLOAD_SERVICE_UNAVAILABLE(503, "파일 업로드 서비스를 사용할 수 없습니다."),
+    INVALID_PAGE(400, "유효하지 않은 페이지입니다" ),
+    INVALID_SIZE(400, "유효하지 않은 크기입니다.");
 
     private final int status;
     private final String message;
