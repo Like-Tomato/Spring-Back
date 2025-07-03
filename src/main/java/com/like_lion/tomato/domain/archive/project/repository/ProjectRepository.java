@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface ProjectRepository extends JpaRepository<Project, String> {
     @Query("SELECT p FROM Project p JOIN p.generation g WHERE g.year = :year")
     Page<Project> findByYear(@Param("year") Integer year, Pageable pageable);
@@ -19,4 +21,9 @@ public interface ProjectRepository extends JpaRepository<Project, String> {
                                         @Param("category") ProjectCategory category,
                                         Pageable pageable);
 
+    @Query("SELECT p FROM Project p " +
+                  "LEFT JOIN FETCH p.projectImages pi " +
+                  "LEFT JOIN FETCH p.generation g " +
+                  "WHERE p.id = :projectId")
+    Optional<Project> findByIdWithImages(@Param("projectId") String projectId);
 }
