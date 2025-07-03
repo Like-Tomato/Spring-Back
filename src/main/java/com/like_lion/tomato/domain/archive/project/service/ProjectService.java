@@ -1,28 +1,32 @@
 package com.like_lion.tomato.domain.archive.project.service;
 
-import com.like_lion.tomato.domain.archive.project.dto.ProjectDto;
+import com.like_lion.tomato.domain.archive.project.dto.ProjectListResponse;
 import com.like_lion.tomato.domain.archive.project.entity.Project;
 import com.like_lion.tomato.domain.archive.project.entity.ProjectImage;
+import com.like_lion.tomato.domain.archive.project.entity.constant.ProjectCategory;
 import com.like_lion.tomato.domain.archive.project.exception.ProjectErrorCode;
 import com.like_lion.tomato.domain.archive.project.exception.ProjectException;
 import com.like_lion.tomato.domain.archive.project.repository.ProjectImageRepository;
 import com.like_lion.tomato.domain.archive.project.repository.ProjectRepository;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
-import com.like_lion.tomato.domain.member.exception.GenerationErrorCode;
-import com.like_lion.tomato.domain.member.exception.GenerationException;
-import com.like_lion.tomato.domain.member.repository.GenerationRepository;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
-import com.like_lion.tomato.domain.member.service.MemberService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import com.like_lion.tomato.infra.s3.service.S3PresignedService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static com.like_lion.tomato.domain.archive.project.dto.ProjectDto.*;
+import static com.like_lion.tomato.domain.archive.project.dto.ProjectListResponse.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,41 +34,14 @@ import static com.like_lion.tomato.domain.archive.project.dto.ProjectDto.*;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectImageRepository projectImageRepository;
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
-    private final GenerationRepository generationRepository;
-    private final S3PresignedService preSignedService;
     private final S3PresignedService s3PresignedService;
 
-    public Response uploadProject(UploadRequest request, String authorization) {
-
-        validateRequest(request);
-        validateTeamMembers(request.teamMembers());
-
-        Member member = memberService.extractMemberFromToken(authorization);
-
-        Generation generation = generationRepository.findByYear(request.years())
-                .orElseThrow(() -> new GenerationException(GenerationErrorCode.GENERATION_NOT_FOUND));
-
-        Project project = createProject(request, member, generation);
-        projectRepository.save(project);
-
-        ProjectImage projectImage = createProjectImage(request, project);
-        projectImageRepository.save(projectImage);
-
-        String preSignedUrl = preSignedService.generateUploadUrl(
-                request.getFileKey(),
-                "image/*",
-                3600 // 1시간
-        );
-
-        log.info("프로젝트 업로드 완료: projectId={}, title={}, generation={}",
-                project.getId(), project.getTitle(), generation.getYear());
-
-        return new ProjectDto.Response(preSignedUrl, request.getFileKey());
+    public Response uploadProject(WriteRequest request, String authorization) {
+        return null;
     }
 
-    private void validateRequest(UploadRequest request) {
+    private void validateRequest(WriteRequest request) {
         request.validateDateRange();
         request.validateFileFormat();
     }
@@ -77,7 +54,7 @@ public class ProjectService {
         }
     }
 
-    private Project createProject(UploadRequest request, Member member, Generation generation) {
+    private Project createProject(WriteRequest request, Member member, Generation generation) {
         return Project.builder()
                 .title(request.title())
                 .subtitle(request.subtitle())
@@ -95,7 +72,7 @@ public class ProjectService {
                 .build();
     }
 
-    private ProjectImage createProjectImage(UploadRequest request, Project project) {
+    private ProjectImage createProjectImage(WriteRequest request, Project project) {
         return ProjectImage.builder()
                 .fileKey(request.getFileKey())
                 .setOrder(1)
@@ -116,5 +93,135 @@ public class ProjectService {
             .toList());
 
         return new ApiResponse.MessageData("프로젝트 게시물이 삭제되었습니다.");
+    }
+
+    public ApiResponse.MessageData updateProject(WriteRequest request) {
+        validateRequest(request);
+        validateTeamMembers(request.extractMemberNames());
+
+        return new ApiResponse.MessageData("프로젝트 게시물이 성공적으로 수정되었습니다.");
+    }
+
+    public ProjectListResponse getProjects(Integer year, String category, int page, int size) {
+        validateProjectListParams(category, page, size);
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
+
+        Page<Project> projectPage = getProjectsByFilters(year, category, pageable);
+
+        List<ProjectSummary> projectSummaries = projectPage.getContent().stream()
+                .map(this::convertToProjectSummary)
+                .toList();
+
+        return new ProjectListResponse(
+                projectSummaries,
+                page,
+                projectPage.getTotalPages()
+        );
+    }
+
+    private void validateProjectListParams(String category, int page, int size) {
+        if (category != null && !isValidCategory(category)) {
+            throw new ProjectException(ProjectErrorCode.INVALID_CATEGORY);
+        }
+
+        if (page < 1) {
+            throw new ProjectException(ProjectErrorCode.INVALID_PAGE);
+        }
+
+        if (size < 1 || size > 100) {
+            throw new ProjectException(ProjectErrorCode.INVALID_SIZE);
+        }
+    }
+
+    private boolean isValidCategory(String category) {
+        try {
+            ProjectCategory.valueOf(category.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private Page<Project> getProjectsByFilters(Integer year, String category, Pageable pageable) {
+        if (year != null && category != null) {
+            ProjectCategory projectCategory = ProjectCategory.valueOf(category.toUpperCase());
+            return projectRepository.findByYearAndCategory(year, projectCategory, pageable);
+        } else if (year != null) {
+            return projectRepository.findByYear(year, pageable);
+        } else if (category != null) {
+            ProjectCategory projectCategory = ProjectCategory.valueOf(category.toUpperCase());
+            return projectRepository.findByCategory(projectCategory, pageable);
+        } else {
+            return projectRepository.findAll(pageable);
+        }
+    }
+
+    private ProjectSummary convertToProjectSummary(Project project) {
+        ThumbnailInfo thumbnail = createThumbnailInfo(project);
+
+        return new ProjectSummary(
+                project.getId(),
+                project.getTitle(),
+                project.getDescription(),
+                project.getCategory(),
+                project.getTeamName(),
+                thumbnail
+        );
+    }
+
+    private ThumbnailInfo createThumbnailInfo(Project project) {
+        Optional<ProjectImage> firstImage = project.getProjectImages().stream()
+                .min(Comparator.comparing(ProjectImage::getSetOrder));
+
+        if (firstImage.isPresent()) {
+            ProjectImage image = firstImage.get();
+
+            String presignedUrl = s3PresignedService.generateDownloadUrl(image.getFileKey());
+
+            String fileName = extractFileName(image.getFileKey());
+            String mimeType = determineMimeType(fileName);
+            Long fileSize = getFileSize(image.getFileKey()); // S3에서 파일 크기 조회 필요
+            Long expireAt = System.currentTimeMillis() + (3600 * 1000); // 1시간 후 만료
+
+            return new ThumbnailInfo(
+                    image.getFileKey(),
+                    fileName,
+                    mimeType,
+                    fileSize,
+                    presignedUrl,
+                    expireAt
+            );
+        }
+
+        return new ThumbnailInfo(null, null, null, null, null, null);
+    }
+
+    private String extractFileName(String fileKey) {
+        if (fileKey == null) return null;
+        String[] parts = fileKey.split("/");
+        return parts[parts.length - 1];
+    }
+
+    private String determineMimeType(String fileName) {
+        if (fileName == null) return null;
+
+        String extension = fileName.toLowerCase().substring(fileName.lastIndexOf(".") + 1);
+        return switch (extension) {
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "png" -> "image/png";
+            case "gif" -> "image/gif";
+            case "webp" -> "image/webp";
+            default -> "application/octet-stream";
+        };
+    }
+
+    private Long getFileSize(String fileKey) {
+        // S3에서 파일 크기를 조회하는 로직
+        try {
+            return s3PresignedService.getFileSize(fileKey);
+        } catch (Exception e) {
+            return 0L; // 기본값
+        }
     }
 }
