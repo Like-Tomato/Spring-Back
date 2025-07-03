@@ -7,7 +7,9 @@ import com.like_lion.tomato.domain.member.implement.MemberReader;
 import com.like_lion.tomato.domain.session.dto.SessionListRes;
 import com.like_lion.tomato.domain.session.dto.request.SessionPostReq;
 import com.like_lion.tomato.domain.session.dto.response.SessionDetailRes;
+import com.like_lion.tomato.domain.session.dto.response.SessionListWithStateRes;
 import com.like_lion.tomato.domain.session.dto.response.SessionSimpleRes;
+import com.like_lion.tomato.domain.session.dto.response.SessionWithState;
 import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.domain.session.entity.session.Session;
 import com.like_lion.tomato.domain.session.entity.session.SessionFIle;
@@ -39,30 +41,52 @@ public class SessionService {
     @Value("${cloud.aws.s3.download.expTime}")
     private Long downloadExpTime;
 
+    /**
+     * 파트/주차별 전체 세션 + 멤버별 과제 제출여부 포함 조회
+     */
     @Transactional(readOnly = true)
-    public SessionListRes readAllSessions(String part, Integer week) {
-        if (!part.isBlank() && !Part.isValid(part)) throw new SessionException(SessionErrorCode.INVALID_PART);
-        Part partEnum = Part.valueOf(part.toUpperCase());
+    public SessionListWithStateRes readAllSessionsWithSubmissionState(String memberId, String part, Integer week) {
+        Part partEnum = null;
+        if (part != null && !part.isBlank()) {
+            if (!Part.isValid(part)) throw new IllegalArgumentException("유효하지 않은 파트입니다.");
+            partEnum = Part.valueOf(part.toUpperCase());
+        }
 
         // 함수명 변경! (findAllByPartOrAll → findAllByPartAndWeek)
         List<Session> sessionEntities = sessionRepository.findAllByPartAndWeek(partEnum, week);
 
-        List<SessionSimpleRes> simpleResList = sessionEntities.stream()
-                .map(SessionSimpleRes::from)
+        List<SessionWithState> sessionWithStates = sessionEntities.stream()
+                .map(session -> {
+                    boolean submitted = assignmentSubmissionRepository.existsByMemberIdAndSessionId(memberId, session.getId());
+                    return SessionWithState.builder()
+                            .sessionId(session.getId())
+                            .sessionTitle(session.getTitle())
+                            .week(session.getWeek())
+                            .submitted(submitted)
+                            .build();
+                })
                 .toList();
 
-        return SessionListRes.from(simpleResList);
+        return SessionListWithStateRes.from(sessionWithStates);
     }
 
+    /**
+     * 세션 상세 + 해당 멤버의 과제 제출 내역 조회
+     * @param sessionId 세션 ID
+     * @param memberId  현재 로그인한 멤버 ID (JWT에서 추출)
+     * @return SessionDetailRes
+     */
     @Transactional(readOnly = true)
     public SessionDetailRes getSessionWithAssignment(String sessionId, String memberId) {
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionException(SessionErrorCode.SESSION_NOT_FOUND));
 
+        // 해당 멤버의 과제 제출 내역 조회 (없을 수도 있음) -> 데이터 정합성만 보장되면 Session에서 과제 리스트로 조회할 수 있도록 리팩텅링!
         AssignmentSubmission submissions = assignmentSubmissionRepository
                 .findByMemberIdAndSessionId(memberId, sessionId)
                 .orElse(null);
 
+        // 세션 파일 모두 조회
         SessionFIle sessionFile = sessionFileRepository.findBySessionId(sessionId)
                 .orElse(null);
 
@@ -77,16 +101,25 @@ public class SessionService {
             );
         }
 
+        // 3. DTO 변환 후 반환
         return SessionDetailRes.from(session, presignedUrlRes);
+
     }
 
+    /**
+     * 세션 파일 등록 (ADMIN만 가능)
+     * @param sessionId 세션 ID
+     * @param memberId  등록자(관리자) 멤버 ID
+     * @param req       파일 등록 요청 DTO(fileKey, mimeType)
+     */
     @Transactional
-    public void create(String sessionId, String memberId, SessionPostReq req) {
+    public void create(String sessionId, String memberId, SessionPostReq req){
         Session session = sessionRepository.findById(sessionId)
                 .orElseThrow(() -> new SessionException(SessionErrorCode.SESSION_NOT_FOUND));
         Member member = memberReader.findOptionById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.MEMBER_NOT_FOUND));
 
+        // DTO에서 엔티티로 변환 후 저장
         sessionFileRepository.save(req.to(session, member));
     }
 }

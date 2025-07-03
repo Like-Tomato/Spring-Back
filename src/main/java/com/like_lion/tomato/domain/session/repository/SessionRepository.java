@@ -1,5 +1,6 @@
 package com.like_lion.tomato.domain.session.repository;
 
+import com.like_lion.tomato.domain.session.entity.assignment.AssignmentSubmission;
 import com.like_lion.tomato.domain.session.entity.session.Session;
 import com.like_lion.tomato.global.common.enums.Part;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ public interface SessionRepository extends JpaRepository<Session, String> {
         SELECT s FROM Session s
         WHERE (:part IS NULL OR s.part = :part)
           AND (:week IS NULL OR s.week = :week)
-        ORDER BY s.endedAt DESC
+        ORDER BY s.endedAt ASC
     """)
     List<Session> findAllByPartAndWeek(
             @Param("part") Part part,
