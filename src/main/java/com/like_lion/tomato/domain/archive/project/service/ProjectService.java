@@ -1,5 +1,7 @@
 package com.like_lion.tomato.domain.archive.project.service;
 
+import com.like_lion.tomato.domain.archive.project.dto.ProjectDetailResponse;
+import com.like_lion.tomato.domain.archive.project.dto.ProjectDetailResponse.ProjectImageInfo;
 import com.like_lion.tomato.domain.archive.project.dto.ProjectListResponse;
 import com.like_lion.tomato.domain.archive.project.entity.Project;
 import com.like_lion.tomato.domain.archive.project.entity.ProjectImage;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -223,5 +226,55 @@ public class ProjectService {
         } catch (Exception e) {
             return 0L; // 기본값
         }
+    }
+
+    public ProjectDetailResponse getProjectDetail(String projectId) {
+        Project project = projectRepository.findByIdWithImages(projectId)
+                .orElseThrow(() -> new ProjectException(ProjectErrorCode.PROJECT_NOT_FOUND));
+
+        return convertToProjectDetailResponse(project);
+    }
+
+    private ProjectDetailResponse convertToProjectDetailResponse(Project project) {
+        List<ProjectImageInfo> images = project.getProjectImages().stream()
+                .sorted(Comparator.comparing(ProjectImage::getSetOrder))
+                .map(this::convertToProjectImageInfo)
+                .toList();
+
+        LocalDateTime uploadedAt = project.getCreatedAt();
+        Integer years = project.getGeneration() != null ? project.getGeneration().getYear() : null;
+
+        return new ProjectDetailResponse(
+                project.getId(),
+                project.getTitle(),
+                project.getSubtitle(),
+                project.getProjectUrl(),
+                project.getStartedAt(),
+                project.getFinishedAt(),
+                images,
+                project.getTeamMembers(),
+                project.getTeamName(),
+                project.getDescription(),
+                years,
+                project.getCategory(),
+                project.getPlatform(),
+                project.isBest(),
+                uploadedAt
+        );
+    }
+
+    private ProjectImageInfo convertToProjectImageInfo(ProjectImage image) {
+        String presignedUrl = s3PresignedService.generateDownloadUrl(image.getFileKey());
+        String mimeType = determineMimeType(image.getFileKey());
+        Long fileSize = getFileSize(image.getFileKey());
+        Long expireAt = System.currentTimeMillis() + (3600 * 1000); // 1시간 후 만료
+
+        return new ProjectImageInfo(
+                image.getFileKey(),
+                mimeType,
+                fileSize,
+                presignedUrl,
+                expireAt
+        );
     }
 }
