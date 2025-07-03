@@ -28,4 +28,6 @@ public interface MemberRepository extends JpaRepository<Member, String> {
             @Param("roles") List<Role> roles,
             Pageable pageable
     );
+
+    boolean existsByUsername(String username);
 }

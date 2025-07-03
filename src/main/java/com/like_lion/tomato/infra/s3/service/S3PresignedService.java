@@ -6,12 +6,14 @@ import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.like_lion.tomato.infra.s3.dto.request.PresignedUrlReq;
 import com.like_lion.tomato.infra.s3.dto.response.PresignedUrlRes;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,6 +21,7 @@ import java.util.UUID;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3PresignedService {
 
     @Value("${cloud.aws.s3.bucket}")
@@ -57,6 +60,24 @@ public class S3PresignedService {
         return PresignedUrlRes.of(url.toString(), fileKey);
     }
 
+    public String generateUploadUrl(String fileKey, String contentType, int expirationInSeconds) {
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += expirationInSeconds * 1000L;
+        expiration.setTime(expTimeMillis);
+
+        GeneratePresignedUrlRequest presignedRequest = new GeneratePresignedUrlRequest(bucket, fileKey)
+                .withMethod(HttpMethod.PUT)
+                .withExpiration(expiration);
+
+        if (contentType != null && !contentType.isEmpty()) {
+            presignedRequest.addRequestParameter("Content-Type", contentType);
+        }
+
+        URL url = amazonS3.generatePresignedUrl(presignedRequest);
+        return url.toString();
+    }
+
     /**
      * S3 Presigned URL 발급을 위한 요청 객체를 생성한다.
      *
@@ -85,11 +106,24 @@ public class S3PresignedService {
      * @param fileName 원본 파일명
      * @return S3에 저장할 유니크한 파일 key
      */
-    /**
     private String createKey(String prefix, String fileName) {
         String fileUniqueId = UUID.randomUUID().toString();
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return String.format("%s/%s/%s", prefix, timestamp, fileUniqueId, fileName);
+        return String.format("%s/%s_%s_%s", prefix, timestamp, fileUniqueId, fileName);
     }
-     **/
+
+    public void deleteFile(String fileKey) {
+        try {
+            amazonS3.deleteObject(bucket, fileKey);
+            log.info("S3 파일 삭제 완료: {}", fileKey);
+        } catch (Exception e) {
+            log.error("S3 파일 삭제 실패: {}", fileKey, e);
+        }
+    }
+
+    public void deleteFiles(List<String> fileKeys) {
+        for (String fileKey : fileKeys) {
+            deleteFile(fileKey);
+        }
+    }
 }

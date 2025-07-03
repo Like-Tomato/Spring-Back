@@ -7,6 +7,8 @@ import com.like_lion.tomato.domain.member.dto.response.MemberProfileRes;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.member.service.MemberService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +21,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    
+    @Operation(
+            summary = "멤버 전체 목록 조회",
+            description = "페이지, 사이즈, 파트, 연도별로 멤버 프로필 목록을 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping("/member")
     public ApiResponse<MemberProfileListRes> readAllByFilter(
             @RequestParam(defaultValue = "1") int page,
@@ -30,12 +36,20 @@ public class MemberController {
         return ApiResponse.success(memberService.readAllMemberProfiles(page, size, part, year));
     }
 
-
+    @Operation(
+            summary = "멤버 프로필 상세 조회",
+            description = "멤버 ID로 멤버의 상세 프로필을 조회합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @GetMapping("/{memberId}")
     public ApiResponse<MemberProfileRes> read(@PathVariable String memberId) {
         return ApiResponse.success(memberService.readMemberProfile(memberId));
     }
-
+    @Operation(
+            summary = "멤버 프로필 수정",
+            description = "본인만 자신의 프로필을 수정할 수 있습니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
     @PutMapping("/{memberId}")
     @PreAuthorize("hasRole('MEMBER') and #memberId == authentication.principal.id")
     public ApiResponse<MemberProfileRes> update(@PathVariable String memberId,

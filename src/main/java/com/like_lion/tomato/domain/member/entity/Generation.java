@@ -31,6 +31,9 @@ public class Generation {
     @OneToMany(mappedBy = "generation")
     private List<MemberGeneration> memberGenerations = new ArrayList<>();
 
+    @Column
+    private boolean isCurrent;
+
     // 상수 정의
     public static final int BASE_YEAR = 2012;
 

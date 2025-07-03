@@ -1,4 +1,4 @@
-package com.like_lion.tomato.domain.archieve.exception;
+package com.like_lion.tomato.domain.archive.exception;
 
 import com.like_lion.tomato.global.exception.CustomException;
 
