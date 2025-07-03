@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class ApplicationController {
     private final ApplicationService applicationService;
 
-    @PostMapping("/application")
+    @PostMapping("/apply/draft")
     public ApiResponse<ApplicationResponse> submitApplication(
             @RequestBody @Valid ApplicationRequest request,
             @RequestHeader("Authorization") String authorization
