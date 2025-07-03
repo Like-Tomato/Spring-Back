@@ -126,4 +126,12 @@ public class S3PresignedService {
             deleteFile(fileKey);
         }
     }
+
+    public String generateDownloadUrl(String fileKey) {
+        return "https://s3-bucket.../projects/" + fileKey + "?X-Amz-Signature=...";
+    }
+
+    public Long getFileSize(String fileKey) {
+        return 102400L; // 예시값
+    }
 }
