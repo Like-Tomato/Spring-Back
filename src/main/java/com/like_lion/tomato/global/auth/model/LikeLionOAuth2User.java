@@ -3,6 +3,7 @@ package com.like_lion.tomato.global.auth.model;
 import com.like_lion.tomato.global.auth.dto.UserInfo;
 import com.like_lion.tomato.global.auth.model.provider.OAuth2ProviderUser;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -12,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @ToString
 public class LikeLionOAuth2User implements OAuth2User {
     private Map<String, Object> attributes;
@@ -43,8 +45,8 @@ public class LikeLionOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userInfo.getRole());
-        authorities.add(simpleGrantedAuthority);
+        // 반드시 enum의 name()을 써서 "ROLE_MEMBER" 등으로!
+        authorities.add(new SimpleGrantedAuthority(userInfo.getRole().name()));
         return authorities;
     }
 
@@ -61,7 +63,7 @@ public class LikeLionOAuth2User implements OAuth2User {
         return this.userInfo.getEmail();
     }
 
-    public String getRole() {
+    public Role getRole() {
         return this.userInfo.getRole();
     }
 

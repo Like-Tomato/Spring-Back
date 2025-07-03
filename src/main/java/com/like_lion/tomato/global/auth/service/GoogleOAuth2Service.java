@@ -3,6 +3,7 @@ package com.like_lion.tomato.global.auth.service;
 import com.like_lion.tomato.domain.auth.exception.AuthErrorCode;
 import com.like_lion.tomato.domain.auth.exception.AuthException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonValueFormat.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GoogleOAuth2Service {
@@ -36,12 +38,17 @@ public class GoogleOAuth2Service {
             throw new AuthException(AuthErrorCode.GOOGLE_CLIENT_REGISTRATION_NOT_FOUND);
         }
         String state = java.util.UUID.randomUUID().toString();
+
+        log.info("Scopes: " + clientRegistration.getScopes());
+
+
         return UriComponentsBuilder.fromUriString(clientRegistration.getProviderDetails().getAuthorizationUri())
                 .queryParam("client_id", clientRegistration.getClientId())
                 .queryParam("redirect_uri", clientRegistration.getRedirectUri())
                 .queryParam("response_type", "code")
-                .queryParam("scope", String.join(" "), clientRegistration.getScopes())
                 .queryParam("state", state)
+                .queryParam("scope", "email profile")
+
                 .build()
                 .toUriString();
     }

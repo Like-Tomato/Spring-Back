@@ -10,7 +10,7 @@ import static com.like_lion.tomato.global.auth.implement.JwtTokenProvider.BEARER
 
 public class HttpHeaderUtil {
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_HEADER = "accessToken";
 
     private HttpHeaderUtil() {
         throw new IllegalArgumentException("Utility class");

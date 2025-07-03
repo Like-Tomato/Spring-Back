@@ -60,12 +60,19 @@ public class SecurityConfig {
         // 경로별 인가
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/v1", "/api/v1/member").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/login/google",
+                                "/api/v1/auth/login/**",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/logout",
+                                "/api/v1", "/api/v1/member"
+                        ).permitAll()
                         .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
                         .requestMatchers("/api/v1/session/**").hasAnyRole("MEMBER")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        //.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/master/**").hasAnyRole("MASTER")
                         .anyRequest().authenticated());
+
 
 
         http
@@ -75,8 +82,14 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable);
         http
-                .sessionManagement((session)-> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                );
+//
+//        http
+//                .sessionManagement((session)-> session
+//
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
                 .oauth2Login((oauth2) -> oauth2

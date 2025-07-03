@@ -6,6 +6,7 @@ import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.global.auth.dto.TokenDto;
 import com.like_lion.tomato.global.auth.dto.UserInfo;
 import com.like_lion.tomato.global.auth.model.LikeLionOAuth2User;
+import com.like_lion.tomato.global.auth.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -156,8 +157,9 @@ public class JwtTokenProvider {
         return jwtParser.parseSignedClaims(token).getPayload().get("provider", String.class);
     }
 
-    public String getRole(String token) {
-        return getPayload(token).get("role", String.class);
+    public Role getRole(String token) {
+        String roleString = getPayload(token).get("role", String.class);
+        return Role.valueOf(roleString); // String → Enum 변환
     }
 
     public String getProfileImage(String token) {
