@@ -4,6 +4,7 @@ import com.like_lion.tomato.domain.archive.project.entity.constant.Platform;
 import com.like_lion.tomato.domain.archive.project.entity.constant.ProjectCategory;
 import com.like_lion.tomato.domain.member.entity.Generation;
 import com.like_lion.tomato.domain.member.entity.Member;
+import com.like_lion.tomato.global.common.BaseEntity;
 import com.like_lion.tomato.global.id.DomainId;
 import com.like_lion.tomato.global.id.DomainType;
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Project {
+public class Project extends BaseEntity {
 
     @DomainId(DomainType.PROJECT)
     @Id
