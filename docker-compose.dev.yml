@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: like-tomato-postgres-local
+    container_name: like-tomato-postgres-dev
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}

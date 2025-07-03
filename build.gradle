@@ -51,10 +51,15 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	//runtimeOnly 'com.mysql:mysql-connector-j'
+
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+	annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+	annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -72,6 +77,18 @@ dependencies {
 	// SpringDoc - Swagger UI
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.671'
+}
+
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+
+sourceSets {
+	main.java.srcDirs += querydslDir
+}
+
+tasks.withType(JavaCompile) {
+	options.annotationProcessorGeneratedSourcesDirectory = querydslDir
+	options.compilerArgs += ["-Xlint:-processing", "-Xlint:-unchecked", "-Xlint:-rawtypes", "-Xlint:-cast"]
+	options.compilerArgs += "-nowarn" // 모든 경고 무시
 }
 
 tasks.named('test') {
