@@ -21,7 +21,7 @@ public class EmailSubscription extends BaseEntity {
 
     @DomainId(DomainType.RECRUITMENT_EMAIL_SUBSCRIPTION)
     @Id
-    private Long id;
+    private String id;
 
     @Column(unique = true, nullable = false)
     private String email;
