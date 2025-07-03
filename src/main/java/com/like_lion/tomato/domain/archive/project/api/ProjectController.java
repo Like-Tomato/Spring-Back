@@ -1,6 +1,7 @@
 package com.like_lion.tomato.domain.archive.project.api;
 
 import com.like_lion.tomato.domain.archive.project.dto.ProjectDto;
+import com.like_lion.tomato.domain.archive.project.dto.ProjectListResponse;
 import com.like_lion.tomato.domain.archive.project.service.ProjectService;
 import com.like_lion.tomato.global.exception.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ public class ProjectController {
     @PostMapping
     @PreAuthorize("hasRole('MEMBER')")
     public ApiResponse<ProjectDto.Response> uploadProject(
-            @RequestBody ProjectDto.UploadRequest request,
+            @RequestBody ProjectDto.WriteRequest request,
             @RequestHeader("Authorization") String authorization
     ) {
         ProjectDto.Response response = projectService.uploadProject(request, authorization);
@@ -30,5 +31,22 @@ public class ProjectController {
     ) {
         ApiResponse.MessageData message = projectService.deleteProject(projectId);
         return ApiResponse.success(message);
+    }
+
+    @PatchMapping
+    @PreAuthorize("hasRole('MEMBER')")
+    public ApiResponse.MessageData updateProject(@RequestBody ProjectDto.WriteRequest request) {
+        return projectService.updateProject(request);
+    }
+
+    @GetMapping
+    public ApiResponse<ProjectListResponse> getProjects(
+            @RequestParam(value = "year", required = false) Integer year,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "20") int size
+    ) {
+        ProjectListResponse response = projectService.getProjects(year, category, page, size);
+        return ApiResponse.success(response);
     }
 }
