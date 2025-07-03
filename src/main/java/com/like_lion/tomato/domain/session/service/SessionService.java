@@ -36,7 +36,7 @@ public class SessionService {
     private final MemberReader memberReader;
     private final S3PresignedService s3PresignedService;
 
-    @Value("${cloud.s3.download.expTime}")
+    @Value("${cloud.aws.s3.download.expTime}")
     private Long downloadExpTime;
 
     @Transactional(readOnly = true)
