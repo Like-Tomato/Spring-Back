@@ -1,7 +1,5 @@
 package com.like_lion.tomato.domain.recruitment.service.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.member.service.MemberService;
 import com.like_lion.tomato.domain.recruitment.dto.application.ApplicationRequest;
@@ -47,11 +45,8 @@ public class ApplicationService {
                 request.portfolioUrl()
         );
 
-        List<QuestionAnswer> commonAnswers = parseQuestionAnswers(request.commonQuestions());
-        List<RecruitmentCommonAnswer> commonAnswerEntities = createCommonAnswers(commonAnswers);
-
-        List<QuestionAnswer> partAnswers = parseQuestionAnswers(request.partQuestions());
-        List<RecruitmentPartAnswer> partAnswerEntities = createPartAnswers(partAnswers);
+        List<RecruitmentCommonAnswer> commonAnswerEntities = createCommonAnswers(request.commonQuestions());
+        List<RecruitmentPartAnswer> partAnswerEntities = createPartAnswers(request.partQuestions());
 
         Application application = Application.builder()
                 .username(request.name())
@@ -98,11 +93,8 @@ public class ApplicationService {
 
         Optional<Application> existingDraft = applicationRepository.findByMemberIdAndSubmittedAtIsNull(member.getId());
 
-        List<QuestionAnswer> commonAnswers = parseQuestionAnswersWithBlanks(request.commonQuestions());
-        List<RecruitmentCommonAnswer> commonAnswerEntities = createCommonAnswersWithBlanks(commonAnswers);
-
-        List<QuestionAnswer> partAnswers = parseQuestionAnswersWithBlanks(request.partQuestions());
-        List<RecruitmentPartAnswer> partAnswerEntities = createPartAnswersWithBlanks(partAnswers);
+        List<RecruitmentCommonAnswer> commonAnswerEntities = createCommonAnswersWithBlanks(request.commonQuestions());
+        List<RecruitmentPartAnswer> partAnswerEntities = createPartAnswersWithBlanks(request.partQuestions());
 
         Application application;
         if (existingDraft.isPresent()) {
@@ -132,41 +124,6 @@ public class ApplicationService {
         String accessToken = jwtTokenProvider.generateAccessTokenForMember(member);
 
         return ApplicationResponse.from(savedApplication, accessToken);
-    }
-
-    public List<QuestionAnswer> parseQuestionAnswers(String jsonString) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(jsonString,
-                    mapper.getTypeFactory().constructCollectionType(
-                            List.class, QuestionAnswer.class));
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("질문 답변 JSON 형식이 올바르지 않습니다", e);
-        }
-    }
-
-    public List<QuestionAnswer> parseQuestionAnswersWithBlanks(String jsonString) {
-        if (jsonString == null || jsonString.trim().isEmpty()) {
-            return List.of();
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            List<QuestionAnswer> answers = mapper.readValue(jsonString,
-                    mapper.getTypeFactory().constructCollectionType(
-                            List.class, QuestionAnswer.class));
-
-            return answers.stream()
-                    .filter(qa ->
-                            qa.questionId() != null && !qa.questionId().trim().isEmpty())
-                    .map(qa -> new QuestionAnswer(
-                            qa.questionId(),
-                            qa.answer() != null ? qa.answer() : ""
-                    ))
-                    .toList();
-        } catch (JsonProcessingException e) {
-            return List.of();
-        }
     }
 
     private List<RecruitmentCommonAnswer> createCommonAnswersWithBlanks(List<QuestionAnswer> answers) {
