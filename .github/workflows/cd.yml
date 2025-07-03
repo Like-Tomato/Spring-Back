@@ -36,25 +36,22 @@ jobs:
           docker build -t ${{ secrets.DOCKERHUB_ID }}/like-tomato:latest .
           docker push ${{ secrets.DOCKERHUB_ID }}/like-tomato:latest
 
-      - name: Deploy to Production EC2
-        uses: appleboy/ssh-action@master
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
+          ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
+
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
             echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login -u ${{ secrets.DOCKERHUB_ID }} --password-stdin
-            sudo docker pull ${{ secrets.DOCKERHUB_ID }}/like-tomato
-
-            sudo docker ps -f name=like-tomato-api -q | sudo xargs --no-run-if-empty docker container stop
-            sudo docker ps -a -f name=like-tomato-api -q | sudo xargs --no-run-if-empty docker container rm
-
+            sudo docker pull ${{ secrets.DOCKERHUB_ID }}/like-tomato:latest
+            sudo docker stop like-tomato-api || true
+            sudo docker rm like-tomato-api || true
             sudo docker run -d \
               --name like-tomato-api \
               -p 8080:8080 \
-              -e "SPRING_PROFILES_ACTIVE=deploy" \
-              -e "SPRING_DATASOURCE_URL=${{ secrets.DB_URL }}" \
-              -e "SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }}" \
-              -e "SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+              -e "SPRING_PROFILES_ACTIVE=prod" \
               -e "TZ=Asia/Seoul" \
-              ${{ secrets.DOCKERHUB_ID }}/like-tomato
+              ${{ secrets.DOCKERHUB_ID }}/like-tomato:latest
+          EOF
