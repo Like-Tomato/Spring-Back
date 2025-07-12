@@ -47,10 +47,10 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Part part;
 
-    @Column
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'http://github.com, http://youtube.com'")
     private String links;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT 'computer'")
     private String major;
 
     @Column(length = 200)
@@ -141,8 +141,8 @@ public class Member {
         this.role = role;
         this.part = part;
         this.introduce = introduce;
-        this.major = major;
-        this.links = links;
+        this.major = (major != null ? major : "computer"); // 기본값 직접 할당
+        this.links = (links != null ? links : "test");
         this.isSubscribed  = isSubscribed;
         this.isApplied = isApplied;
     }
@@ -169,5 +169,9 @@ public class Member {
     public boolean hasAdminRoleOrHigher() {
         return this.role != null &&
                 (this.role == Role.ROLE_ADMIN || this.role == Role.ROLE_MASTER);
+    }
+
+    public void setId(String s) {
+        this.id = s;
     }
 }

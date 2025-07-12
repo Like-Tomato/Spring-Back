@@ -5,9 +5,12 @@ import com.like_lion.tomato.domain.member.entity.Member;
 import com.like_lion.tomato.domain.member.repository.MemberRepository;
 import com.like_lion.tomato.global.auth.model.Role;
 import com.like_lion.tomato.global.auth.model.provider.OAuth2ProviderUser;
+import com.like_lion.tomato.global.id.DomainType;
 import com.like_lion.tomato.infra.s3.service.S3PresignedService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import static com.like_lion.tomato.global.id.IdGeneratorListener.idGenerator;
 //import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -26,16 +29,17 @@ public class MemberWriter {
                 : Role.ROLE_GUEST;
 
         // 구글 프로필 이미지 URL 추출 후 filKey로 변환하여 저장
-        String fileKey = null;
+        String fileKey = "test";
         String googleProfileUrl = oAuth2ProviderUser.getProfileUrl();
-        if(googleProfileUrl != null && !googleProfileUrl.isEmpty()) {
-            fileKey = s3PresignedService.uploadProfileImageFromUrl(googleProfileUrl);
-        }
+        //if(googleProfileUrl != null && !googleProfileUrl.isEmpty()) {
+       //     fileKey = s3PresignedService.uploadProfileImageFromUrl(googleProfileUrl);
+        //}
 
         //최초 로그인시 Provider 이름으로 설정!(이후 프로필에서 수정)
         String providerUserName = oAuth2ProviderUser.getUsername();
         //setName으로설정?
         Member member = oAuth2ProviderUser.toMember(role, fileKey);
+        member.setId(idGenerator.generateId(DomainType.MEMBER));
         memberRepository.save(member);
         return member;
     }

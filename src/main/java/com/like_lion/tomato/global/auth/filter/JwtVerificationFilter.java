@@ -22,23 +22,32 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String bearerToken= request.getHeader("Authorization");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        String bearerToken = request.getHeader("Authorization");
         String accessToken = jwtService.getTokenFromBearer(bearerToken);
 
-        if(!StringUtils.hasText(accessToken)) {
+        // 토큰이 없으면 다음 필터로 넘김
+        if (!StringUtils.hasText(accessToken)) {
             filterChain.doFilter(request, response);
             return;
         }
 
+        // 토큰 검증 및 인증 컨텍스트 설정
         jwtService.validate(accessToken);
         setAuthenticationContext(accessToken);
         filterChain.doFilter(request, response);
     }
 
+    // 🟢 OAuth2 콜백, 인증 시작, 인증 필요 없는 경로는 필터를 건너뜀!
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return super.shouldNotFilter(request);
+        String path = request.getServletPath();
+        return path.startsWith("/login/oauth2/code/")
+                || path.startsWith("/oauth2/authorization/")
+                || path.startsWith("/api/v1/auth/login")
+                || path.startsWith("/api/v1/auth/refresh")
+                || path.startsWith("/api/v1/auth/logout");
     }
 
     private void setAuthenticationContext(String token) {
@@ -51,5 +60,4 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
                 );
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
-
 }

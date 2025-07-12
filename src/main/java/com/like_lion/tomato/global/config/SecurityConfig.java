@@ -20,6 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -37,7 +39,6 @@ public class SecurityConfig {
     private final JwtVerificationFilter jwtVerificationFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -52,67 +53,64 @@ public class SecurityConfig {
                 .build();
     }
 
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // 경로별 인가
         http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(
-                                "/api/v1/auth/login/google",
-                                "/api/v1/auth/login/**",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/auth/logout",
-                                "/api/v1", "/api/v1/member"
-                        ).permitAll()
-                        .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
-                        .requestMatchers("/api/v1/session/**").hasAnyRole("MEMBER")
-                        //.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/master/**").hasAnyRole("MASTER")
-                        .anyRequest().authenticated());
-
-
-
-        http
-                .csrf(AbstractHttpConfigurer::disable);
-
-        http
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable);
-        http
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
-//
-//        http
-//                .sessionManagement((session)-> session
-//
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         http
-                .oauth2Login((oauth2) -> oauth2
+                .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfoEndpointConfig ->
                                 userInfoEndpointConfig
-                                        .userService(likeLionOauth2UserService))
-                        .successHandler(oAuth2LoginSuccessHandler))
-                .logout(logout ->
-                        logout
-                                .clearAuthentication(true)
-                                .invalidateHttpSession(true)
-                                .logoutUrl("/api/v1/auth/logout")
-                                .logoutSuccessHandler(jwtLogoutSuccessHandler)
-                )
-                .addFilterBefore(jwtVerificationFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+                                        .userService(likeLionOauth2UserService)
+                        )
+                        .successHandler(oAuth2LoginSuccessHandler)
+                );
 
-                .addFilterBefore(jwtExceptionFilter, JwtVerificationFilter.class)
+        http
+                .logout(logout -> logout
+                        .clearAuthentication(true)
+                        .invalidateHttpSession(true)
+                        .logoutUrl("/api/v1/auth/logout")
+                        .logoutSuccessHandler(jwtLogoutSuccessHandler)
+                );
+
+        // 커스텀 필터 등록 (순서 중요!)
+        http
+                .addFilterBefore(jwtVerificationFilter, OAuth2AuthorizationRequestRedirectFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtVerificationFilter.class);
+
+        http
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .authenticationEntryPoint(oAuth2EntryPorint)
-                                .accessDeniedHandler(jwtAccessDeniedHandler));
-
-
+                                .accessDeniedHandler(jwtAccessDeniedHandler)
+                );
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/login/**",
+                                "/login/oauth2/code/**",     // 콜백 엔드포인트 (permitAll)
+                                "/oauth2/authorization/**",  // 인증 시작 엔드포인트 (permitAll)
+                                "/api/v1/auth/login/**",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/logout",
+                                "/api/v1", "/api/v1/member",
+                                "/redirect"
+                        ).permitAll()
+                        .requestMatchers("/api/v1/member/**").hasRole("GUEST")
+                        .requestMatchers("/api/v1/session/**").hasAnyRole("MEMBER")
+                        //.requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/master/**").hasAnyRole("MASTER")
+                        .anyRequest().authenticated()
+                );
 
         return http.build();
     }
@@ -123,7 +121,6 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

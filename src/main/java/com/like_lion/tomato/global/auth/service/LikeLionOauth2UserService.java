@@ -20,7 +20,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class LikeLionOauth2UserService implements OAuth2UserService {
+public class LikeLionOauth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
 
     private final MemberRepository memberRepository;
@@ -32,6 +32,10 @@ public class LikeLionOauth2UserService implements OAuth2UserService {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest); // 인가 서버와 통신해서 실제 사용자 정보 조회
         OAuth2ProviderUser oAuth2ProviderUser = this.getOauth2ProviderUsers(clientRegistration, oAuth2User);
+
+        log.info("client registration: {}", clientRegistration.toString());
+        log.info("oAuth2User: {}", oAuth2User.toString());
+        log.info("OAuth2 ProvderUser: {}", oAuth2ProviderUser.toString());
 
         // MemberRepository로부터 기존 회원 정보조회(responseApi 도입 후 수정 예정)
         Member member = memberRepository.findByEmail(oAuth2ProviderUser.getEmail())

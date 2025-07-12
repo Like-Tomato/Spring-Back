@@ -20,9 +20,9 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            client-id: 49284976932-rbqrgn71vs81d13sj4oug44pf39mq6vs.apps.googleusercontent.com
+            client-secret: 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
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
 
             scope:
               - email
@@ -51,7 +51,7 @@ logging:
     org.hibernate.SQL: DEBUG
 
 jwt:
-  secret: MyS3cr3tK3y!@#12345
+  secret: a3b7c9d1e2f4g6h8i0j2k4m6n8p0q2r4s6t8v0w2x4y6z8
   access-token-expiration: 3600000
   refresh-token-expiration: 604800000
 
@@ -69,4 +69,4 @@ cloud:
         expTime: 3600    # 1시간 (초 단위)
 
 client:
-  url: ${CLIENT_URL:http://localhost:3000}
+  url: http://localhost:8080/redirect

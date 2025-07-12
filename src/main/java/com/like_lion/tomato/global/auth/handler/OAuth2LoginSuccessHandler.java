@@ -7,6 +7,7 @@ import com.like_lion.tomato.global.auth.service.JwtService;
 import com.like_lion.tomato.global.util.CookieUtil;
 import com.like_lion.tomato.global.util.HttpHeaderUtil;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -45,17 +46,18 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("access token: {}", tokenDto.getAccessToken());
         log.info("refresh token: {}", tokenDto.getRefreshToken());
 
-        HttpHeaderUtil.setAccessToken(response, tokenDto.getAccessToken());
+        //HttpHeaderUtil.setAccessToken(response, tokenDto.getAccessToken()); 어차피 브라우저가 안넣어줌!
         // 리프레시 토큰: 쿠키 설정 (만료 시간은 밀리초 → 초 변환)
         int refreshMaxAge = (int) (jwtTokenProvider.getRefreshTokenExpiration() / 1000);
         CookieUtil.setRefreshCookies(response, tokenDto.getRefreshToken(), refreshMaxAge);
 
         // 로그로 토큰 정보 확인 (주석처리 해제해서 사용)
         log.info("OAuth2 로그인 성공: userId={}, accessToken={}, refreshToken={}", principal.getId(), tokenDto.getAccessToken(), tokenDto.getRefreshToken());
-        response.sendRedirect(createUri(tokenDto, principal.getId()));
+
+        response.sendRedirect(createUri(tokenDto, response));
     }
 
-    private String createUri(TokenDto tokenDto, String userId) {
+    private String createUri(TokenDto tokenDto, HttpServletResponse response) {
         return UriComponentsBuilder
                 .fromUriString(clientUrl)
                 .queryParam("accessToken", tokenDto.getAccessToken())

@@ -26,8 +26,15 @@ public class AuthController {
     private final JwtService jwtService;
     private final JwtTokenProvider jwtTokenProvider;
 
-
+    // 구글 로그인 버튼을 누르면 이 엔드포인트로 이동
     @GetMapping("/login/google")
+    public String googleLogin() {
+        // Spring Security가 제공하는 자동 인가 엔드포인트로 리다이렉트
+        return "redirect:/oauth2/authorization/google";
+    }
+
+
+/*    @GetMapping("/login/google")
     public ApiResponse<ApiResponse.MessageDataWithData<String>> googleLogin() {
         String authUri = googleOAuth2Service.generateGoogleAuthUrl();
 
@@ -37,7 +44,7 @@ public class AuthController {
                 "구글 로그인 URL이 생성되었습니다.",
                 authUri
                 );
-    }
+    }*/
 
 
     @PostMapping("/logout")

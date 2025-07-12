@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Component
 public class IdGeneratorListener {
-    private static IdGenerator idGenerator;
+    public static IdGenerator idGenerator;
 
     @Autowired
     public void setIdGenerator(IdGenerator generator) {

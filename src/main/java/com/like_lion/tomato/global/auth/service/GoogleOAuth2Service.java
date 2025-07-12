@@ -46,8 +46,7 @@ public class GoogleOAuth2Service {
                 .queryParam("client_id", clientRegistration.getClientId())
                 .queryParam("redirect_uri", clientRegistration.getRedirectUri())
                 .queryParam("response_type", "code")
-                .queryParam("state", state)
-                .queryParam("scope", "email profile")
+                .queryParam("state", state).queryParam("scope", "profile email")
 
                 .build()
                 .toUriString();
